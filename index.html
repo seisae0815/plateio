@@ -166,8 +166,22 @@ footer p{font-size:.78rem;color:var(--muted)}
 .faq-item.open .faq-a{max-height:300px}
 .faq-a-inner{padding:.2rem 1.4rem 1.2rem;font-size:.86rem;color:var(--muted);line-height:1.7;border-top:1px solid var(--border)}
 
+/* Footer */
+.footer-link{color:var(--muted);cursor:pointer;text-decoration:none;transition:color .2s}
+.footer-link:hover{color:var(--sage)}
+
+/* Legal content styles */
+.legal-h1{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;color:var(--dark);margin-bottom:1.2rem}
+.legal-h2{font-size:.88rem;font-weight:500;color:var(--dark);margin:1.4rem 0 .4rem;text-transform:uppercase;letter-spacing:.5px}
+.legal-p{font-size:.84rem;color:var(--muted);line-height:1.75;margin-bottom:.6rem}
+.legal-placeholder{background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:.25rem .5rem;font-size:.8rem;color:#856404;font-family:monospace}
+.legal-ul{margin:.4rem 0 .8rem 1.2rem;display:flex;flex-direction:column;gap:.3rem}
+.legal-ul li{font-size:.84rem;color:var(--muted);line-height:1.6}
+.legal-divider{border:none;border-top:1px solid var(--border);margin:1.2rem 0}
+
 @media(max-width:600px){
   .faq-section{padding:3rem 1.2rem}
+  footer{flex-direction:column;gap:.5rem;text-align:center;padding:1.5rem}
 }
 
 /* ── AUTH MODAL ── */
@@ -566,8 +580,25 @@ footer p{font-size:.78rem;color:var(--muted)}
   <footer>
     <div class="footer-logo">plate<span>io</span></div>
     <p>© 2025 Plateio · Meal Planning leicht gemacht</p>
-    <p style="font-size:.75rem;color:var(--muted)">Datenschutz · AGB · Kontakt</p>
+    <p style="font-size:.75rem;color:var(--muted)">
+      <a class="footer-link" href="#" onclick="event.preventDefault();openLegal('datenschutz')">Datenschutz</a> ·
+      <a class="footer-link" href="#" onclick="event.preventDefault();openLegal('agb')">AGB</a> ·
+      <a class="footer-link" href="#" onclick="event.preventDefault();openLegal('impressum')">Impressum</a>
+    </p>
   </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     DATENSCHUTZ / AGB / IMPRESSUM MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="legal-overlay">
+  <div class="modal" style="max-width:640px;max-height:88vh;display:flex;flex-direction:column">
+    <div class="modal-head" style="flex-shrink:0">
+      <div class="modal-title" id="legal-title">Datenschutzerklärung</div>
+      <button class="modal-close" onclick="closeOverlay('legal-overlay')">×</button>
+    </div>
+    <div id="legal-body" style="overflow-y:auto;padding:1.5rem 2rem;font-size:.85rem;line-height:1.8;color:var(--text)"></div>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -697,6 +728,15 @@ footer p{font-size:.78rem;color:var(--muted)}
       </div>
       <div class="shop-list" id="shop-list"></div>
     </div>
+  </div>
+
+  <!-- App Footer -->
+  <div style="text-align:center;padding:2rem 1rem 3rem;border-top:1px solid var(--border);margin-top:2rem">
+    <p style="font-size:.75rem;color:var(--muted)">
+      <a class="footer-link" href="#" onclick="event.preventDefault();openLegal('datenschutz')">Datenschutz</a> ·
+      <a class="footer-link" href="#" onclick="event.preventDefault();openLegal('agb')">AGB</a> ·
+      <a class="footer-link" href="#" onclick="event.preventDefault();openLegal('impressum')">Impressum</a>
+    </p>
   </div>
 </div>
 
@@ -1530,8 +1570,158 @@ function simulateUpgrade(){
   showToast('🎉 Willkommen bei Plateio Pro!');
 }
 
-// ── FAQ ──
-function toggleFaq(el){
+// ── LEGAL ──
+var legalContent = {
+  datenschutz: {
+    title: 'Datenschutzerklärung',
+    html: `
+<div class="legal-h1">Datenschutzerklärung</div>
+<p class="legal-p">Stand: 2025 · Verantwortlicher: <span class="legal-placeholder">[DEIN VORNAME NACHNAME]</span>, <span class="legal-placeholder">[STRASSE, HAUSNUMMER]</span>, <span class="legal-placeholder">[PLZ ORT]</span>, Österreich · E-Mail: <span class="legal-placeholder">[DEINE@EMAIL.AT]</span></p>
+
+<div class="legal-h2">1. Grundsatz</div>
+<p class="legal-p">Wir nehmen den Schutz deiner personenbezogenen Daten ernst und verarbeiten diese ausschließlich auf Basis der Datenschutz-Grundverordnung (DSGVO) sowie des österreichischen Datenschutzgesetzes (DSG).</p>
+
+<div class="legal-h2">2. Welche Daten wir erheben</div>
+<ul class="legal-ul">
+  <li><strong>Registrierungsdaten:</strong> E-Mail-Adresse, Name, verschlüsseltes Passwort</li>
+  <li><strong>Nutzungsdaten:</strong> Gespeicherte Rezepte, Wochenpläne, Favoriten</li>
+  <li><strong>Zahlungsdaten:</strong> Werden ausschließlich von Stripe verarbeitet — wir speichern keine Kreditkartendaten</li>
+  <li><strong>Technische Daten:</strong> IP-Adresse, Browser-Typ, Zeitpunkt des Zugriffs (Server-Logs)</li>
+</ul>
+
+<div class="legal-h2">3. Zweck der Datenverarbeitung</div>
+<ul class="legal-ul">
+  <li>Bereitstellung und Betrieb der Plateio Web-App</li>
+  <li>Verwaltung deines Nutzerkontos</li>
+  <li>Abwicklung von Zahlungen (Pro-Abo)</li>
+  <li>Analyse von Instagram-Posts via OpenAI API (keine dauerhafte Speicherung der Post-Inhalte)</li>
+</ul>
+
+<div class="legal-h2">4. Rechtsgrundlage</div>
+<p class="legal-p">Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am sicheren Betrieb der App).</p>
+
+<div class="legal-h2">5. Drittanbieter & Datenübertragung</div>
+<ul class="legal-ul">
+  <li><strong>Supabase</strong> (Datenbank, USA/EU) — Deine Rezepte und Kontodaten werden dort gespeichert. Supabase ist DSGVO-konform.</li>
+  <li><strong>Stripe</strong> (Zahlungsabwicklung, USA/EU) — Verarbeitet Zahlungsdaten. Stripe ist DSGVO-konform und PCI-DSS-zertifiziert.</li>
+  <li><strong>OpenAI</strong> (KI-Analyse, USA) — Instagram-Links werden zur Analyse übermittelt. OpenAI verarbeitet diese gemäß ihrer eigenen Datenschutzrichtlinie.</li>
+  <li><strong>Vercel</strong> (Hosting, USA/EU) — Stellt die Web-App bereit. DSGVO-konform.</li>
+</ul>
+
+<div class="legal-h2">6. Speicherdauer</div>
+<p class="legal-p">Deine Daten werden so lange gespeichert wie dein Konto aktiv ist. Nach Kontolöschung werden alle personenbezogenen Daten innerhalb von 30 Tagen gelöscht, sofern keine gesetzliche Aufbewahrungspflicht besteht.</p>
+
+<div class="legal-h2">7. Deine Rechte (DSGVO Art. 15–22)</div>
+<ul class="legal-ul">
+  <li>Recht auf Auskunft über gespeicherte Daten</li>
+  <li>Recht auf Berichtigung unrichtiger Daten</li>
+  <li>Recht auf Löschung („Recht auf Vergessenwerden")</li>
+  <li>Recht auf Datenübertragbarkeit</li>
+  <li>Recht auf Widerspruch gegen die Verarbeitung</li>
+</ul>
+<p class="legal-p">Zur Ausübung deiner Rechte wende dich an: <span class="legal-placeholder">[DEINE@EMAIL.AT]</span></p>
+
+<div class="legal-h2">8. Beschwerderecht</div>
+<p class="legal-p">Du hast das Recht, Beschwerde bei der österreichischen Datenschutzbehörde einzulegen: <strong>Österreichische Datenschutzbehörde</strong>, Barichgasse 40–42, 1030 Wien, dsb@dsb.gv.at</p>
+
+<div class="legal-h2">9. Cookies</div>
+<p class="legal-p">Plateio verwendet ausschließlich technisch notwendige Cookies zur Aufrechterhaltung der Sitzung (Login-Status). Es werden keine Tracking- oder Werbe-Cookies eingesetzt.</p>
+    `
+  },
+  agb: {
+    title: 'Allgemeine Geschäftsbedingungen',
+    html: `
+<div class="legal-h1">Allgemeine Geschäftsbedingungen (AGB)</div>
+<p class="legal-p">Stand: 2025 · Anbieter: <span class="legal-placeholder">[DEIN VORNAME NACHNAME]</span>, <span class="legal-placeholder">[STRASSE, HAUSNUMMER, PLZ ORT]</span>, Österreich</p>
+
+<div class="legal-h2">1. Geltungsbereich</div>
+<p class="legal-p">Diese AGB gelten für die Nutzung der Web-App „Plateio" unter <span class="legal-placeholder">[DEINE DOMAIN, z.B. plateio.app]</span>. Mit der Registrierung akzeptierst du diese Bedingungen.</p>
+
+<div class="legal-h2">2. Leistungsbeschreibung</div>
+<p class="legal-p">Plateio ist ein digitaler Mahlzeitenplaner der es ermöglicht, Rezepte aus Instagram-Posts mittels KI zu analysieren und in einem Wochenplan zu organisieren. Der Dienst wird als Web-App bereitgestellt.</p>
+
+<div class="legal-h2">3. Kostenloser & kostenpflichtiger Tarif</div>
+<ul class="legal-ul">
+  <li><strong>Free-Tarif:</strong> Kostenlos, 5 KI-Analysen pro Monat, 1 Gericht pro Tag, werbefinanziert</li>
+  <li><strong>Pro-Tarif (monatlich):</strong> 4,99 € / Monat, unbegrenzte Analysen, werbefrei</li>
+  <li><strong>Pro-Tarif (jährlich):</strong> 39,99 € / Jahr, entspricht 3,33 € / Monat</li>
+</ul>
+<p class="legal-p">Alle Preise inkl. gesetzlicher MwSt. Zahlungen werden über Stripe abgewickelt.</p>
+
+<div class="legal-h2">4. Vertragslaufzeit & Kündigung</div>
+<p class="legal-p">Das monatliche Pro-Abo verlängert sich automatisch um einen Monat, das Jahres-Abo um ein Jahr, sofern nicht rechtzeitig gekündigt wird. Die Kündigung ist jederzeit mit sofortiger Wirkung zum Ende des bezahlten Zeitraums möglich — direkt in den Kontoeinstellungen.</p>
+
+<div class="legal-h2">5. Widerrufsrecht</div>
+<p class="legal-p">Bei digitalen Inhalten, die sofort nach Vertragsabschluss bereitgestellt werden, erlischt das Widerrufsrecht gemäß § 18 Abs. 1 Z 11 FAGG mit Beginn der Ausführung des Vertrages, sofern du ausdrücklich zugestimmt hast, dass wir vor Ablauf der Widerrufsfrist mit der Ausführung beginnen.</p>
+
+<div class="legal-h2">6. Verfügbarkeit & Haftung</div>
+<p class="legal-p">Wir bemühen uns um eine hohe Verfügbarkeit des Dienstes, können jedoch keine 100%ige Verfügbarkeit garantieren. Wartungsarbeiten werden nach Möglichkeit angekündigt.</p>
+<p class="legal-p">Die KI-Analyse von Instagram-Posts basiert auf maschinellem Lernen. Wir übernehmen keine Gewähr für die Vollständigkeit oder Richtigkeit der erkannten Rezepte. Der Nutzer ist für die Überprüfung der Inhalte verantwortlich.</p>
+<p class="legal-p">Die Haftung für leichte Fahrlässigkeit ist — soweit gesetzlich zulässig — ausgeschlossen, außer bei Personenschäden.</p>
+
+<div class="legal-h2">7. Nutzerpflichten</div>
+<ul class="legal-ul">
+  <li>Du darfst Plateio ausschließlich für private, nicht-kommerzielle Zwecke nutzen</li>
+  <li>Das Weitergeben von Zugangsdaten ist nicht gestattet</li>
+  <li>Das Einschleusen schädlicher Inhalte oder der Missbrauch der KI-Analyse ist untersagt</li>
+  <li>Du bist verantwortlich für die Einhaltung der Nutzungsbedingungen von Instagram bei der Verwendung von Links</li>
+</ul>
+
+<div class="legal-h2">8. Änderungen der AGB</div>
+<p class="legal-p">Wir behalten uns vor, diese AGB mit einer Ankündigungsfrist von 30 Tagen zu ändern. Du wirst per E-Mail informiert. Bei wesentlichen Änderungen hast du das Recht, das Abo außerordentlich zu kündigen.</p>
+
+<div class="legal-h2">9. Anwendbares Recht & Gerichtsstand</div>
+<p class="legal-p">Es gilt österreichisches Recht unter Ausschluss des UN-Kaufrechts. Gerichtsstand für Streitigkeiten mit Unternehmern ist <span class="legal-placeholder">[DEIN WOHNORT]</span>, Österreich.</p>
+<p class="legal-p">Für Verbraucher gilt der allgemeine Gerichtsstand gemäß § 14 KSchG. Die EU-Kommission stellt unter <a href="https://ec.europa.eu/consumers/odr" target="_blank" style="color:var(--sage)">ec.europa.eu/consumers/odr</a> eine Online-Streitbeilegungsplattform bereit.</p>
+
+<div class="legal-h2">10. Kontakt</div>
+<p class="legal-p">Bei Fragen zu diesen AGB: <span class="legal-placeholder">[DEINE@EMAIL.AT]</span></p>
+    `
+  },
+  impressum: {
+    title: 'Impressum',
+    html: `
+<div class="legal-h1">Impressum</div>
+<p class="legal-p" style="background:var(--accent-l);border:1px solid #e8d5a8;border-radius:8px;padding:.75rem 1rem;color:#856404;font-size:.8rem">⚠️ Das Impressum wird erst bei öffentlichem Betrieb mit kommerzieller Absicht Pflicht. Für den Beta-Test kannst du diese Platzhalter vorerst lassen.</p>
+
+<div class="legal-h2">Angaben gemäß § 5 ECG (Österreich)</div>
+
+<p class="legal-p">
+  <strong>Name:</strong> <span class="legal-placeholder">[DEIN VORNAME NACHNAME]</span><br>
+  <strong>Adresse:</strong> <span class="legal-placeholder">[STRASSE HAUSNUMMER]</span>, <span class="legal-placeholder">[PLZ ORT]</span>, Österreich<br>
+  <strong>E-Mail:</strong> <span class="legal-placeholder">[DEINE@EMAIL.AT]</span><br>
+  <strong>Telefon:</strong> <span class="legal-placeholder">[+43 ...]</span> (optional, aber empfohlen)
+</p>
+
+<div class="legal-h2">Unternehmensform & Gewerbebehörde</div>
+<p class="legal-p">
+  <strong>Rechtsform:</strong> <span class="legal-placeholder">[z.B. Einzelunternehmer / e.U. / GmbH]</span><br>
+  <strong>Gewerbebehörde:</strong> <span class="legal-placeholder">[Bezirkshauptmannschaft / Magistrat DEINER STADT]</span><br>
+  <strong>Gewerbe:</strong> Dienstleistungen in der automatischen Datenverarbeitung und Informationstechnik<br>
+  <strong>UID-Nummer:</strong> <span class="legal-placeholder">[ATU... — erst nach Anmeldung beim Finanzamt]</span>
+</p>
+
+<div class="legal-h2">Inhaltliche Verantwortung</div>
+<p class="legal-p"><span class="legal-placeholder">[DEIN VORNAME NACHNAME]</span> (Anschrift wie oben)</p>
+
+<div class="legal-h2">Haftungsausschluss</div>
+<p class="legal-p">Trotz sorgfältiger Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>
+
+<div class="legal-h2">Urheberrecht</div>
+<p class="legal-p">Die durch uns erstellten Inhalte und Werke auf dieser Website unterliegen dem österreichischen Urheberrecht. Bildmaterial: Unsplash (lizenzfrei).</p>
+
+<hr class="legal-divider">
+<p class="legal-p" style="font-size:.78rem">Platzhalter erkennst du an der gelben Markierung <span class="legal-placeholder">[BEISPIEL]</span> — diese musst du vor dem öffentlichen Launch durch deine echten Daten ersetzen.</p>
+    `
+  }
+};
+
+function openLegal(page){
+  var content = legalContent[page];
+  document.getElementById('legal-title').textContent = content.title;
+  document.getElementById('legal-body').innerHTML = content.html;
+  openOverlay('legal-overlay');
+}
   var isOpen = el.classList.contains('open');
   document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
   if(!isOpen) el.classList.add('open');

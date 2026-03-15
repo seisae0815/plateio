@@ -170,6 +170,32 @@ footer p{font-size:.78rem;color:var(--muted)}
 .footer-link{color:var(--muted);cursor:pointer;text-decoration:none;transition:color .2s}
 .footer-link:hover{color:var(--sage)}
 
+/* Shopping list meal blocks */
+.shop-meal-block{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.shop-meal-head{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;cursor:pointer;transition:background .15s;gap:8px}
+.shop-meal-head:hover{background:var(--sage-l)}
+.shop-meal-name{font-size:.88rem;font-weight:500;color:var(--text)}
+.shop-meal-day{font-size:.72rem;color:var(--muted);background:var(--cream);padding:.15rem .5rem;border-radius:20px}
+.shop-meal-count{font-size:.75rem;color:var(--muted)}
+.shop-toggle-icon{color:var(--muted);font-size:1rem;transition:transform .2s;display:inline-block}
+.shop-meal-items{border-top:1px solid var(--border);padding:.4rem .6rem}
+
+/* Account modal */
+.acc-item{display:flex;align-items:center;gap:12px;padding:.85rem 1rem;border-radius:10px;cursor:pointer;transition:background .15s;font-size:.88rem;color:var(--text);border:none;background:transparent;width:100%;font-family:'DM Sans',sans-serif;text-align:left}
+.acc-item:hover{background:var(--sage-l)}
+.acc-item svg{flex-shrink:0;color:var(--sage)}
+.acc-item span:nth-child(2){flex:1}
+.acc-arrow{color:var(--muted);font-size:1rem}
+.acc-item-danger{color:var(--red)!important}
+.acc-item-danger:hover{background:var(--red-l)!important}
+.acc-item-danger svg{color:var(--red)!important}
+
+/* Support FAQ */
+.supp-faq-item{border:0.5px solid var(--color-border-tertiary);border-radius:9px;overflow:hidden;cursor:pointer}
+.supp-q{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;font-size:.83rem;font-weight:500;color:var(--text);gap:.5rem;user-select:none}
+.supp-q span{color:var(--muted);font-size:1rem;flex-shrink:0}
+.supp-ans{display:none;padding:.2rem 1rem .8rem;font-size:.8rem;color:var(--muted);line-height:1.6;border-top:0.5px solid var(--color-border-tertiary)}
+
 /* Legal content styles */
 .legal-h1{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;color:var(--dark);margin-bottom:1.2rem}
 .legal-h2{font-size:.88rem;font-weight:500;color:var(--dark);margin:1.4rem 0 .4rem;text-transform:uppercase;letter-spacing:.5px}
@@ -413,19 +439,19 @@ footer p{font-size:.78rem;color:var(--muted)}
     ═══════════════════════════════════════════════════════
     -->
     <div class="slide active" id="sl0">
-      <img class="slide-bg" src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1600&q=80&fit=crop" alt="Gesundes Essen" loading="eager">
-      <div class="slide-grad" style="background:linear-gradient(to bottom,rgba(26,26,22,.25) 0%,rgba(26,26,22,.65) 100%)"></div>
+      <img class="slide-bg" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1600&q=80&fit=crop" alt="Food Save" loading="eager">
+      <div class="slide-grad" style="background:linear-gradient(to bottom,rgba(26,26,22,.2) 0%,rgba(26,26,22,.72) 100%)"></div>
       <div class="slide-content">
-        <h1>Dein Wochenplan.<br><em>Deine Gerichte.</em></h1>
-        <p>Instagram-Rezepte direkt in deinen Mahlzeitenplan</p>
+        <h1>Deine Food-Saves.<br><em>Endlich benutzbar.</em></h1>
+        <p>Von Instagram direkt auf den Tisch</p>
       </div>
     </div>
     <div class="slide" id="sl1">
-      <img class="slide-bg" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1600&q=80&fit=crop" alt="Frisches Gemüse" loading="lazy">
-      <div class="slide-grad" style="background:linear-gradient(to bottom,rgba(26,26,22,.2) 0%,rgba(26,26,22,.7) 100%)"></div>
+      <img class="slide-bg" src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1600&q=80&fit=crop" alt="Gesundes Essen" loading="lazy">
+      <div class="slide-grad" style="background:linear-gradient(to bottom,rgba(26,26,22,.25) 0%,rgba(26,26,22,.65) 100%)"></div>
       <div class="slide-content">
-        <h1>Von Instagram<br><em>auf den Tisch</em></h1>
-        <p>Link einfügen — Rezept wird automatisch erkannt & eingetragen</p>
+        <h1>Kein Rezeptbuch.<br><em>Kein Kochwissen.</em></h1>
+        <p>Nur deine eigenen gespeicherten Posts — organisiert, planbar, umsetzbar.</p>
       </div>
     </div>
     <div class="slide" id="sl2">
@@ -589,6 +615,129 @@ footer p{font-size:.78rem;color:var(--muted)}
 </div>
 
 <!-- ══════════════════════════════════════
+     ACCOUNT MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="account-overlay">
+  <div class="modal" style="max-width:480px;max-height:90vh;overflow-y:auto">
+    <div class="modal-head">
+      <div class="modal-title">Mein Account</div>
+      <button class="modal-close" onclick="closeOverlay('account-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Avatar -->
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border)">
+        <div style="width:52px;height:52px;border-radius:50%;background:var(--sage);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:500;flex-shrink:0" id="acc-avatar-big">H</div>
+        <div>
+          <div style="font-size:.95rem;font-weight:500" id="acc-name-display">Hannes</div>
+          <div style="font-size:.8rem;color:var(--muted)" id="acc-email-display">hannes@plateio.app</div>
+          <div style="margin-top:4px"><span id="acc-plan-badge" style="font-size:.7rem;padding:.2rem .6rem;border-radius:20px;background:var(--sage-l);color:var(--sage-d);font-weight:500">Free Plan</span></div>
+        </div>
+      </div>
+
+      <!-- Menu items -->
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div class="acc-item" onclick="openAccSection('email')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          <span>E-Mail ändern</span>
+          <span class="acc-arrow">›</span>
+        </div>
+        <div class="acc-item" onclick="openAccSection('password')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Passwort ändern</span>
+          <span class="acc-arrow">›</span>
+        </div>
+        <div class="acc-item" onclick="openAccSection('payment')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <span>Zahlungsmittel ändern</span>
+          <span class="acc-arrow">›</span>
+        </div>
+        <div class="acc-item" onclick="openOverlay('upgrade-overlay');closeOverlay('account-overlay')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <span>Plan ändern</span>
+          <span class="acc-arrow">›</span>
+        </div>
+        <div class="acc-item" onclick="closeOverlay('account-overlay');openOverlay('support-overlay')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Hilfe & Support</span>
+          <span class="acc-arrow">›</span>
+        </div>
+        <div class="acc-item acc-item-danger" onclick="confirmDeleteAccount()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          <span>Account löschen</span>
+          <span class="acc-arrow">›</span>
+        </div>
+      </div>
+
+      <!-- Sub-sections (hidden by default) -->
+      <div id="acc-section-email" style="display:none;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--border)">
+        <div class="field"><label>Neue E-Mail</label><input type="email" id="acc-new-email" placeholder="neue@email.at"></div>
+        <button class="btn-full" onclick="showToast('E-Mail geändert ✓');closeAccSection()">Speichern</button>
+      </div>
+      <div id="acc-section-password" style="display:none;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--border)">
+        <div class="field"><label>Aktuelles Passwort</label><input type="password" placeholder="••••••••"></div>
+        <div class="field"><label>Neues Passwort</label><input type="password" placeholder="••••••••"></div>
+        <div class="field"><label>Passwort bestätigen</label><input type="password" placeholder="••••••••"></div>
+        <button class="btn-full" onclick="showToast('Passwort geändert ✓');closeAccSection()">Speichern</button>
+      </div>
+      <div id="acc-section-payment" style="display:none;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--border)">
+        <p style="font-size:.84rem;color:var(--muted);margin-bottom:1rem">Zahlungen werden sicher über Stripe abgewickelt. Du wirst zum Stripe-Portal weitergeleitet.</p>
+        <button class="btn-full" onclick="showToast('Stripe-Portal wird geöffnet (Demo)')">Zum Stripe-Portal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SUPPORT MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="support-overlay">
+  <div class="modal" style="max-width:500px;max-height:90vh;overflow-y:auto">
+    <div class="modal-head">
+      <div class="modal-title">Hilfe & Support</div>
+      <button class="modal-close" onclick="closeOverlay('support-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Mini FAQ -->
+      <div style="margin-bottom:1.5rem">
+        <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.8rem;font-weight:500">Häufige Fragen</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="supp-faq-item" onclick="this.querySelector('.supp-ans').style.display=this.querySelector('.supp-ans').style.display==='block'?'none':'block'">
+            <div class="supp-q">Warum wird mein Instagram-Link nicht erkannt?<span>+</span></div>
+            <div class="supp-ans">Plateio analysiert den Text der Caption. Funktioniert am besten bei Posts mit vollständigem Rezept im Text. Reine Video-Posts ohne Beschreibung können nicht analysiert werden.</div>
+          </div>
+          <div class="supp-faq-item" onclick="this.querySelector('.supp-ans').style.display=this.querySelector('.supp-ans').style.display==='block'?'none':'block'">
+            <div class="supp-q">Wie kündige ich mein Abo?<span>+</span></div>
+            <div class="supp-ans">Gehe zu Mein Account → Plan ändern → dort findest du die Kündigungsoption. Das Abo läuft bis Ende des bezahlten Zeitraums weiter.</div>
+          </div>
+          <div class="supp-faq-item" onclick="this.querySelector('.supp-ans').style.display=this.querySelector('.supp-ans').style.display==='block'?'none':'block'">
+            <div class="supp-q">Sind meine Rezepte sicher gespeichert?<span>+</span></div>
+            <div class="supp-ans">Ja. Deine Daten werden sicher in unserer Datenbank gespeichert und sind nur für dich sichtbar. Details findest du in der Datenschutzerklärung.</div>
+          </div>
+          <div class="supp-faq-item" onclick="this.querySelector('.supp-ans').style.display=this.querySelector('.supp-ans').style.display==='block'?'none':'block'">
+            <div class="supp-q">Wie füge ich Plateio zum Homescreen hinzu?<span>+</span></div>
+            <div class="supp-ans">iPhone: Teilen-Button → „Zum Home-Bildschirm". Android: Menü (⋮) → „App installieren". Danach startet Plateio wie eine native App.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div style="border-top:1px solid var(--border);padding-top:1.2rem">
+        <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.8rem;font-weight:500">Support kontaktieren</div>
+        <div style="background:var(--sage-l);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          <div>
+            <div style="font-size:.82rem;font-weight:500;color:var(--text)">E-Mail Support</div>
+            <div style="font-size:.82rem;color:var(--sage);margin-top:2px"><a href="mailto:support@plateio.app" style="color:var(--sage);text-decoration:none">support@plateio.app</a></div>
+            <div style="font-size:.73rem;color:var(--muted);margin-top:2px">Antwort innerhalb von 24–48 Stunden</div>
+          </div>
+        </div>
+        <p style="font-size:.75rem;color:var(--muted);margin-top:.8rem;line-height:1.5">⚠️ Platzhalter: Ersetze <strong>support@plateio.app</strong> mit deiner echten Support-E-Mail vor dem Launch.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
      DATENSCHUTZ / AGB / IMPRESSUM MODAL
 ══════════════════════════════════════ -->
 <div class="overlay" id="legal-overlay">
@@ -653,7 +802,7 @@ footer p{font-size:.78rem;color:var(--muted)}
     </div>
     <div class="app-nav-right">
       <div class="plan-pill" id="plan-badge">Free Plan</div>
-      <div class="avatar" id="user-avatar">H</div>
+      <div class="avatar" id="user-avatar" onclick="openOverlay('account-overlay')" style="cursor:pointer">H</div>
     </div>
   </nav>
 
@@ -861,6 +1010,10 @@ footer p{font-size:.78rem;color:var(--muted)}
     </div>
     <div class="detail-actions" style="flex-shrink:0">
       <button class="detail-btn danger" onclick="deleteMeal()">Entfernen</button>
+      <button class="detail-btn" id="detail-ig-link-btn" onclick="openIgLink()" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        Instagram öffnen
+      </button>
       <button class="detail-btn primary" onclick="closeOverlay('detail-overlay')">Schließen</button>
     </div>
   </div>
@@ -1295,6 +1448,7 @@ function startAnalyze(){
   }
   var url = document.getElementById('ig-url').value.trim();
   if(!url){ showToast('Bitte einen Instagram-Link einfügen'); return; }
+  var savedIgUrl = url;
   document.getElementById('analyze-btn').disabled = true;
   document.getElementById('loading-text').textContent = 'Rezept wird analysiert...';
   document.getElementById('loading-wrap').classList.add('open');
@@ -1313,6 +1467,7 @@ function startAnalyze(){
     document.getElementById('an-steps').value = r.steps;
     document.getElementById('an-notes').value = r.notes||'';
     document.getElementById('ig-url').value='';
+    document.getElementById('analyze-overlay').setAttribute('data-igurl', savedIgUrl);
     openOverlay('analyze-overlay');
   }, 2400);
 }
@@ -1336,12 +1491,13 @@ function saveAnalyzed(){
   else if(t.includes('fisch')||t.includes('lachs')) emoji='🐟';
   var preview = document.getElementById('an-img-preview');
   var imgData = preview.style.display !== 'none' ? preview.src : null;
+  var igUrl = document.getElementById('analyze-overlay').getAttribute('data-igurl') || null;
   addMealToDay(day, {
     title: title, emoji: emoji, imgData: imgData,
     ingredients: document.getElementById('an-ingredients').value,
     steps: document.getElementById('an-steps').value,
     notes: document.getElementById('an-notes').value,
-    fromIG: true, isFav: false
+    fromIG: true, isFav: false, igUrl: igUrl
   });
   closeOverlay('analyze-overlay');
 }
@@ -1425,22 +1581,38 @@ function openDetail(dayKey, idx){
   currentDetailIdx = idx;
   var m = meals[dayKey][idx];
   document.getElementById('detail-modal-title').textContent = m.title;
+  var photoBtn = '<div style="position:absolute;bottom:.8rem;right:.8rem;background:rgba(0,0,0,.45);color:#fff;border-radius:8px;padding:.3rem .75rem;font-size:.72rem;font-family:\'DM Sans\',sans-serif;pointer-events:none"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Foto ändern</div><input type="file" id="detail-img-file" accept="image/*" style="display:none" onchange="changeDetailImg(this)">';
   if(m.imgData){
-    document.getElementById('detail-img-wrap').innerHTML = '<img src="'+m.imgData+'" style="width:100%;height:100%;object-fit:cover">';
+    document.getElementById('detail-img-wrap').innerHTML = '<img src="'+m.imgData+'" style="width:100%;height:100%;object-fit:cover">'+photoBtn;
   } else {
-    document.getElementById('detail-img-wrap').innerHTML = '<span id="detail-emoji">'+m.emoji+'</span>'+(m.fromIG?'<div class="ig-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</div>':'');
+    document.getElementById('detail-img-wrap').innerHTML =
+      '<span id="detail-emoji">'+m.emoji+'</span>'+
+      (m.fromIG?'<div class="ig-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</div>':'')+photoBtn;
   }
   document.getElementById('detail-ingredients').textContent = m.ingredients||'Keine Zutaten angegeben';
   document.getElementById('detail-steps').textContent = m.steps||'Keine Zubereitung angegeben';
   document.getElementById('detail-notes').textContent = m.notes||'Keine Notizen';
   var isFav = m.isFav || favorites.some(function(f){ return f.title===m.title; });
   updateFavBtn(isFav);
-  // reset tabs
+  // Instagram link button
+  var igBtn = document.getElementById('detail-ig-link-btn');
+  if(m.igUrl){
+    igBtn.style.display='inline-flex';
+    igBtn.setAttribute('data-url', m.igUrl);
+  } else {
+    igBtn.style.display='none';
+  }
   tabNames.forEach(function(t){ document.getElementById('tab-'+t).classList.remove('active'); });
   document.querySelectorAll('.dtab').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('tab-zutaten').classList.add('active');
   document.querySelectorAll('.dtab')[0].classList.add('active');
   openOverlay('detail-overlay');
+}
+
+function openIgLink(){
+  var url = document.getElementById('detail-ig-link-btn').getAttribute('data-url');
+  if(url) window.open(url,'_blank');
+  else showToast('Kein Instagram-Link gespeichert');
 }
 
 function updateFavBtn(on){
@@ -1522,32 +1694,64 @@ function renderShopPage(){
 }
 
 function generateShopList(){
-  var all = [];
-  Object.values(meals).forEach(function(dayMeals){
-    dayMeals.forEach(function(m){
-      if(m.ingredients){
-        m.ingredients.split('\n').forEach(function(line){
-          var l = line.trim();
-          if(l) all.push(l);
-        });
-      }
+  var today = new Date(); today.setHours(0,0,0,0);
+  var weekDays = [];
+  for(var i=0;i<7;i++){
+    var d=new Date(today); d.setDate(today.getDate()+i);
+    weekDays.push(d);
+  }
+  var list = document.getElementById('shop-list');
+  var hasAny = false;
+  var html = '';
+  weekDays.forEach(function(d){
+    var key = d.toDateString();
+    var dayMeals = meals[key];
+    if(!dayMeals||dayMeals.length===0) return;
+    dayMeals.forEach(function(m, mi){
+      if(!m.ingredients) return;
+      hasAny = true;
+      var mealId = 'meal-'+key.replace(/ /g,'')+mi;
+      var lines = m.ingredients.split('\n').filter(function(l){ return l.trim(); });
+      html += '<div class="shop-meal-block" id="block-'+mealId+'">';
+      html += '<div class="shop-meal-head" onclick="toggleMealBlock(\''+mealId+'\')">';
+      html += '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">'+m.emoji+'</span><span class="shop-meal-name">'+m.title+'</span><span class="shop-meal-day">'+DAY_NAMES[d.getDay()]+' '+d.getDate()+'.'+(d.getMonth()+1)+'.</span></div>';
+      html += '<div style="display:flex;align-items:center;gap:8px"><span class="shop-meal-count" id="cnt-'+mealId+'">'+lines.length+' Zutaten</span><span class="shop-toggle-icon" id="icon-'+mealId+'">›</span></div>';
+      html += '</div>';
+      html += '<div class="shop-meal-items" id="items-'+mealId+'">';
+      lines.forEach(function(item, ii){
+        var sid = mealId+'-'+ii;
+        html += '<div class="shop-item" id="si-'+sid+'" onclick="toggleShopItem(\'si-'+sid+'\',\''+mealId+'\')">';
+        html += '<div class="shop-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>';
+        html += '<div class="shop-item-name">'+item.trim()+'</div></div>';
+      });
+      html += '</div></div>';
     });
   });
-  var list = document.getElementById('shop-list');
-  if(all.length===0){
+  if(!hasAny){
     list.innerHTML='<div class="empty-state"><div class="empty-icon">🛒</div><p>Plane erst Gerichte im Wochenplan um die Einkaufsliste zu generieren.</p></div>';
     return;
   }
-  list.innerHTML = '<div class="shop-cat">Alle Zutaten</div>' +
-    all.map(function(item,i){
-      return '<div class="shop-item" id="si'+i+'" onclick="toggleShopItem(\'si'+i+'\')">'+
-        '<div class="shop-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>'+
-        '<div class="shop-item-name">'+item+'</div></div>';
-    }).join('');
+  list.innerHTML = html;
 }
 
-function toggleShopItem(id){
-  document.getElementById(id).classList.toggle('checked');
+function toggleMealBlock(mealId){
+  var items = document.getElementById('items-'+mealId);
+  var icon = document.getElementById('icon-'+mealId);
+  var open = items.style.display !== 'none' && items.style.display !== '';
+  items.style.display = open ? 'none' : 'block';
+  icon.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+}
+
+function toggleShopItem(sid, mealId){
+  var el = document.getElementById(sid);
+  el.classList.toggle('checked');
+  // update count badge
+  var block = document.getElementById('items-'+mealId);
+  if(!block) return;
+  var total = block.querySelectorAll('.shop-item').length;
+  var checked = block.querySelectorAll('.shop-item.checked').length;
+  var cnt = document.getElementById('cnt-'+mealId);
+  if(cnt) cnt.textContent = checked===total ? '✓ Erledigt' : (total-checked)+' ausstehend';
 }
 
 // ── UPGRADE ──
@@ -1565,6 +1769,7 @@ function simulateUpgrade(){
   document.getElementById('plan-badge').classList.add('pro');
   document.getElementById('upgrade-banner').style.display='none';
   document.getElementById('ad-banner').style.display='none';
+  updateAccountBadge();
   buildWeekGrid();
   renderShopPage();
   showToast('🎉 Willkommen bei Plateio Pro!');
@@ -1721,6 +1926,31 @@ function openLegal(page){
   document.getElementById('legal-title').textContent = content.title;
   document.getElementById('legal-body').innerHTML = content.html;
   openOverlay('legal-overlay');
+}
+
+// ── ACCOUNT ──
+function openAccSection(sec){
+  ['email','password','payment'].forEach(function(s){
+    document.getElementById('acc-section-'+s).style.display='none';
+  });
+  document.getElementById('acc-section-'+sec).style.display='block';
+}
+function closeAccSection(){
+  ['email','password','payment'].forEach(function(s){
+    document.getElementById('acc-section-'+s).style.display='none';
+  });
+}
+function confirmDeleteAccount(){
+  if(confirm('Bist du sicher? Dein Account und alle Daten werden unwiderruflich gelöscht.')){
+    closeOverlay('account-overlay');
+    document.getElementById('page-app').style.display='none';
+    document.getElementById('page-landing').style.display='block';
+    showToast('Account wurde gelöscht');
+  }
+}
+function updateAccountBadge(){
+  var badge = document.getElementById('acc-plan-badge');
+  if(badge) badge.textContent = isPro ? 'Pro ✓' : 'Free Plan';
 }
 
 // ── FAQ ──

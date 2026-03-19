@@ -170,6 +170,30 @@ footer p{font-size:.78rem;color:var(--muted)}
 .footer-link{color:var(--muted);cursor:pointer;text-decoration:none;transition:color .2s}
 .footer-link:hover{color:var(--sage)}
 
+/* Shopping list two-column layout */
+.shop-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start}
+.shop-col-list{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.2rem}
+.shop-col-meals{display:flex;flex-direction:column;gap:8px}
+.shop-meal-filter-item{background:#fff;border:1.5px solid var(--sage);border-radius:10px;padding:.7rem 1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px}
+.shop-meal-filter-item.off{border-color:var(--border);opacity:.55}
+.shop-meal-filter-item:hover{border-color:var(--sage-m)}
+.shop-mfi-check{width:18px;height:18px;border-radius:4px;background:var(--sage);border:1.5px solid var(--sage);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.shop-meal-filter-item.off .shop-mfi-check{background:transparent;border-color:var(--border)}
+.shop-mfi-info{flex:1;min-width:0}
+.shop-mfi-name{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shop-mfi-day{font-size:.7rem;color:var(--muted);margin-top:1px}
+.shop-combined-item{display:flex;align-items:center;gap:10px;padding:.6rem .5rem;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .15s;border-radius:6px}
+.shop-combined-item:last-child{border-bottom:none}
+.shop-combined-item:hover{background:var(--cream)}
+.shop-combined-item.checked{opacity:.45}
+.shop-combined-item.checked .shop-ci-name{text-decoration:line-through}
+.shop-ci-check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.shop-combined-item.checked .shop-ci-check{background:var(--sage);border-color:var(--sage)}
+.shop-ci-name{flex:1;font-size:.86rem;color:var(--text)}
+.shop-ci-tags{display:flex;gap:3px;flex-wrap:wrap}
+.shop-ci-tag{font-size:.62rem;background:var(--sage-l);color:var(--sage-d);padding:.1rem .4rem;border-radius:10px;white-space:nowrap}
+@media(max-width:700px){.shop-layout{grid-template-columns:1fr}.shop-col-meals{order:-1}}
+
 /* Shopping list meal blocks */
 .shop-meal-block{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px}
 .shop-meal-head{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;cursor:pointer;transition:background .15s;gap:8px}
@@ -872,10 +896,20 @@ footer p{font-size:.78rem;color:var(--muted)}
     </div>
     <div id="shop-content">
       <div class="shop-hdr">
-        <div class="shop-week-info" id="shop-week-info">Zutaten für diese Woche</div>
-        <button class="shop-generate-btn" onclick="generateShopList()">Liste neu generieren</button>
+        <div class="shop-week-info" id="shop-week-info">Einkaufsliste für diese Woche</div>
+        <button class="shop-generate-btn" onclick="generateShopList()">↺ Aktualisieren</button>
       </div>
-      <div class="shop-list" id="shop-list"></div>
+      <!-- Two column layout: left = combined list, right = meal filter -->
+      <div class="shop-layout">
+        <div class="shop-col-list">
+          <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:500;margin-bottom:.8rem">Alle Zutaten</div>
+          <div id="shop-list"></div>
+        </div>
+        <div class="shop-col-meals">
+          <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:500;margin-bottom:.8rem">Gerichte</div>
+          <div id="shop-meal-filter"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1283,7 +1317,7 @@ var DAY_NAMES = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 function getWeekDays(){
   var today = new Date(); today.setHours(0,0,0,0);
   var days = [];
-  for(var i=-1; i<7; i++){
+  for(var i=0; i<7; i++){
     var d = new Date(today); d.setDate(today.getDate() + weekOffset*7 + i);
     days.push(d);
   }
@@ -1301,7 +1335,6 @@ function buildWeekGrid(){
   // week label
   var first = days[0], last = days[days.length-1];
   document.getElementById('week-range-label').textContent =
-    (weekOffset===0 ? 'Gestern + Diese Woche · ' : '') +
     first.getDate()+'.'+(first.getMonth()+1)+'. – '+last.getDate()+'.'+(last.getMonth()+1)+'.';
 
   // populate date selects
@@ -1310,14 +1343,13 @@ function buildWeekGrid(){
   days.forEach(function(d){
     var key = d.toDateString();
     var isToday = d.getTime()===today.getTime();
-    var isYesterday = d.getTime()===(new Date(today.getTime()-86400000)).setHours(0,0,0,0);
     var dayMeals = meals[key] || [];
     var maxMeals = isPro ? 3 : 1;
 
     var card = document.createElement('div');
     card.className = 'day-card' + (isToday?' today':'');
 
-    var dname = isToday ? 'Heute' : (isYesterday ? 'Gestern' : DAY_NAMES[d.getDay()]);
+    var dname = isToday ? 'Heute' : DAY_NAMES[d.getDay()];
     var dnumHtml = isToday
       ? '<div class="day-num tod">'+d.getDate()+'</div>'
       : '<div class="day-num">'+d.getDate()+'</div>';
@@ -1711,6 +1743,8 @@ function removeFav(idx){
 }
 
 // ── SHOPPING LIST ──
+var shopActiveMeals = {}; // mealId -> true/false (active = included)
+
 function renderShopPage(){
   if(!isPro){
     document.getElementById('shop-free-wall').style.display='block';
@@ -1724,43 +1758,118 @@ function renderShopPage(){
 
 function generateShopList(){
   var today = new Date(); today.setHours(0,0,0,0);
-  var weekDays = [];
-  for(var i=0;i<7;i++){
-    var d=new Date(today); d.setDate(today.getDate()+i);
-    weekDays.push(d);
-  }
-  var list = document.getElementById('shop-list');
-  var hasAny = false;
-  var html = '';
-  weekDays.forEach(function(d){
+  // Collect all meals for today + next 6 days
+  var allMeals = []; // [{id, meal, day, dayLabel}]
+  for(var i=0; i<7; i++){
+    var d = new Date(today); d.setDate(today.getDate()+i);
     var key = d.toDateString();
     var dayMeals = meals[key];
-    if(!dayMeals||dayMeals.length===0) return;
+    if(!dayMeals) continue;
     dayMeals.forEach(function(m, mi){
       if(!m.ingredients) return;
-      hasAny = true;
-      var mealId = 'meal-'+key.replace(/ /g,'')+mi;
-      var lines = m.ingredients.split('\n').filter(function(l){ return l.trim(); });
-      html += '<div class="shop-meal-block" id="block-'+mealId+'">';
-      html += '<div class="shop-meal-head" onclick="toggleMealBlock(\''+mealId+'\')">';
-      html += '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">'+m.emoji+'</span><span class="shop-meal-name">'+m.title+'</span><span class="shop-meal-day">'+DAY_NAMES[d.getDay()]+' '+d.getDate()+'.'+(d.getMonth()+1)+'.</span></div>';
-      html += '<div style="display:flex;align-items:center;gap:8px"><span class="shop-meal-count" id="cnt-'+mealId+'">'+lines.length+' Zutaten</span><span class="shop-toggle-icon" id="icon-'+mealId+'">›</span></div>';
-      html += '</div>';
-      html += '<div class="shop-meal-items" id="items-'+mealId+'">';
-      lines.forEach(function(item, ii){
-        var sid = mealId+'-'+ii;
-        html += '<div class="shop-item" id="si-'+sid+'" onclick="toggleShopItem(\'si-'+sid+'\',\''+mealId+'\')">';
-        html += '<div class="shop-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>';
-        html += '<div class="shop-item-name">'+item.trim()+'</div></div>';
-      });
-      html += '</div></div>';
+      var id = 'sm-'+key.replace(/ /g,'')+mi;
+      var dayLabel = (i===0?'Heute':DAY_NAMES[d.getDay()])+' '+d.getDate()+'.'+(d.getMonth()+1)+'.';
+      allMeals.push({id:id, meal:m, day:d, dayLabel:dayLabel});
+      // init as active if not yet set
+      if(shopActiveMeals[id]===undefined) shopActiveMeals[id]=true;
     });
-  });
-  if(!hasAny){
-    list.innerHTML='<div class="empty-state"><div class="empty-icon">🛒</div><p>Plane erst Gerichte im Wochenplan um die Einkaufsliste zu generieren.</p></div>';
+  }
+
+  var filterEl = document.getElementById('shop-meal-filter');
+  var listEl = document.getElementById('shop-list');
+
+  if(allMeals.length===0){
+    filterEl.innerHTML='<div style="font-size:.82rem;color:var(--muted);line-height:1.6">Keine Gerichte für diese Woche geplant.</div>';
+    listEl.innerHTML='<div class="empty-state"><div class="empty-icon">🛒</div><p>Plane erst Gerichte im Wochenplan um die Einkaufsliste zu generieren.</p></div>';
     return;
   }
-  list.innerHTML = html;
+
+  // Build meal filter panel
+  filterEl.innerHTML = allMeals.map(function(entry){
+    var on = shopActiveMeals[entry.id];
+    return '<div class="shop-meal-filter-item'+(on?'':' off')+'" onclick="toggleShopMeal(\''+entry.id+'\')" id="smf-'+entry.id+'">'+
+      '<div class="shop-mfi-check">'+
+        (on?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':'')+
+      '</div>'+
+      '<div style="font-size:1.1rem;flex-shrink:0">'+entry.meal.emoji+'</div>'+
+      '<div class="shop-mfi-info">'+
+        '<div class="shop-mfi-name">'+entry.meal.title+'</div>'+
+        '<div class="shop-mfi-day">'+entry.dayLabel+'</div>'+
+      '</div></div>';
+  }).join('');
+
+  // Build combined ingredient list from active meals only
+  rebuildCombinedList(allMeals);
+}
+
+function rebuildCombinedList(allMeals){
+  // Merge ingredients: key = normalized ingredient name
+  var merged = {}; // name -> {name, tags:[], checked}
+  allMeals.forEach(function(entry){
+    if(!shopActiveMeals[entry.id]) return;
+    var lines = entry.meal.ingredients.split('\n').filter(function(l){ return l.trim(); });
+    lines.forEach(function(line){
+      var name = line.trim();
+      if(!name) return;
+      var key = name.toLowerCase().replace(/[^a-zäöüß0-9]/g,'');
+      if(merged[key]){
+        // add tag if not already there
+        var tag = entry.meal.emoji+' '+entry.dayLabel;
+        if(merged[key].tags.indexOf(tag)<0) merged[key].tags.push(tag);
+      } else {
+        merged[key] = {name:name, tags:[entry.meal.emoji+' '+entry.dayLabel], checked:false, key:key};
+      }
+    });
+  });
+
+  var listEl = document.getElementById('shop-list');
+  var items = Object.values(merged);
+  if(items.length===0){
+    listEl.innerHTML='<div style="font-size:.84rem;color:var(--muted);padding:1rem 0;text-align:center">Keine Zutaten — wähle Gerichte rechts aus.</div>';
+    return;
+  }
+
+  listEl.innerHTML = items.map(function(item, i){
+    var sid = 'sci-'+i;
+    return '<div class="shop-combined-item'+(item.checked?' checked':'')+'" id="'+sid+'" onclick="toggleCombinedItem(\''+sid+'\')">'+
+      '<div class="shop-ci-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>'+
+      '<div class="shop-ci-name">'+item.name+'</div>'+
+      '<div class="shop-ci-tags">'+item.tags.map(function(t){ return '<span class="shop-ci-tag">'+t+'</span>'; }).join('')+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleShopMeal(mealId){
+  shopActiveMeals[mealId] = !shopActiveMeals[mealId];
+  var el = document.getElementById('smf-'+mealId);
+  if(el){
+    var on = shopActiveMeals[mealId];
+    el.classList.toggle('off', !on);
+    el.querySelector('.shop-mfi-check').innerHTML = on
+      ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+      : '';
+  }
+  // rebuild combined list with current allMeals
+  var today = new Date(); today.setHours(0,0,0,0);
+  var allMeals = [];
+  for(var i=0; i<7; i++){
+    var d = new Date(today); d.setDate(today.getDate()+i);
+    var key = d.toDateString();
+    var dayMeals = meals[key];
+    if(!dayMeals) continue;
+    dayMeals.forEach(function(m, mi){
+      if(!m.ingredients) return;
+      var id = 'sm-'+key.replace(/ /g,'')+mi;
+      var dayLabel = (i===0?'Heute':DAY_NAMES[d.getDay()])+' '+d.getDate()+'.'+(d.getMonth()+1)+'.';
+      allMeals.push({id:id, meal:m, day:d, dayLabel:dayLabel});
+    });
+  }
+  rebuildCombinedList(allMeals);
+}
+
+function toggleCombinedItem(sid){
+  var el = document.getElementById(sid);
+  if(el) el.classList.toggle('checked');
 }
 
 function toggleMealBlock(mealId){
@@ -1774,7 +1883,6 @@ function toggleMealBlock(mealId){
 function toggleShopItem(sid, mealId){
   var el = document.getElementById(sid);
   el.classList.toggle('checked');
-  // update count badge
   var block = document.getElementById('items-'+mealId);
   if(!block) return;
   var total = block.querySelectorAll('.shop-item').length;

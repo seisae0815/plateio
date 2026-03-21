@@ -1016,24 +1016,14 @@ footer p{font-size:.78rem;color:var(--muted)}
         <label>Notizen</label>
         <textarea id="man-notes" placeholder="Eigene Notizen, Variationen..." rows="2"></textarea>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="field">
-          <label>Portionen</label>
-          <div style="display:flex;align-items:center;gap:8px">
-            <button type="button" onclick="changePortions('man',-1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="man-portions" value="1" min="1" max="20" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:.4rem;font-family:'DM Sans',sans-serif">
-            <button type="button" onclick="changePortions('man',1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">+</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Wiederholen</label>
-          <select id="man-repeat" style="height:36px">
-            <option value="none">Nicht wiederholen</option>
-            <option value="weekly">Jede Woche</option>
-            <option value="biweekly">Alle 2 Wochen</option>
-            <option value="monthly">Jeden Monat</option>
-          </select>
-        </div>
+      <div class="field">
+        <label>Wiederholen</label>
+        <select id="man-repeat" style="height:36px">
+          <option value="none">Nicht wiederholen</option>
+          <option value="weekly">Jede Woche</option>
+          <option value="biweekly">Alle 2 Wochen</option>
+          <option value="monthly">Jeden Monat</option>
+        </select>
       </div>
       <div class="field">
         <label>Tag im Kalender</label>
@@ -1113,20 +1103,11 @@ footer p{font-size:.78rem;color:var(--muted)}
         <label>Notizen</label>
         <textarea id="edit-notes" rows="3" placeholder="Eigene Notizen, Variationen, Tipps..."></textarea>
       </div>
-      <div class="field">
-        <label>Portionen</label>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button type="button" onclick="changePortions('edit',-1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">−</button>
-          <input type="number" id="edit-portions" value="1" min="1" max="20" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:.4rem;font-family:'DM Sans',sans-serif">
-          <button type="button" onclick="changePortions('edit',1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">+</button>
-          <span style="font-size:.78rem;color:var(--muted)">Portion(en)</span>
-        </div>
-      </div>
     </div>
 
     <div class="detail-actions" style="flex-shrink:0">
       <button class="detail-btn danger" onclick="deleteMeal()">Entfernen</button>
-      <button class="detail-btn" onclick="openMoveMeal()">
+      <button class="detail-btn" id="detail-move-btn" onclick="openMoveMeal()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
         Verschieben
       </button>
@@ -1190,26 +1171,6 @@ footer p{font-size:.78rem;color:var(--muted)}
       <div class="field">
         <label>Notizen</label>
         <textarea id="an-notes" rows="2"></textarea>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="field">
-          <label>Portionen</label>
-          <div style="display:flex;align-items:center;gap:8px">
-            <button type="button" onclick="changePortions('an',-1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="an-portions" value="1" min="1" max="20" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:.4rem;font-family:'DM Sans',sans-serif">
-            <button type="button" onclick="changePortions('an',1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">+</button>
-          </div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:4px" id="an-portions-hint">Automatisch erkannt</div>
-        </div>
-        <div class="field">
-          <label>Wiederholen</label>
-          <select id="an-repeat" style="height:36px">
-            <option value="none">Nicht wiederholen</option>
-            <option value="weekly">Jede Woche</option>
-            <option value="biweekly">Alle 2 Wochen</option>
-            <option value="monthly">Jeden Monat</option>
-          </select>
-        </div>
       </div>
       <div class="field">
         <label>Tag im Kalender</label>
@@ -1618,14 +1579,13 @@ function saveManual(){
   var emoji = document.getElementById('man-emoji').value.trim() || '🍽️';
   var imgPreview = document.getElementById('man-img-preview');
   var imgData = imgPreview.style.display!=='none' ? imgPreview.src : null;
-  var portions = parseInt(document.getElementById('man-portions').value)||1;
   var repeat = document.getElementById('man-repeat').value;
   var mealObj = {
     title: title, emoji: emoji, imgData: imgData,
     ingredients: document.getElementById('man-ingredients').value,
     steps: document.getElementById('man-steps').value,
     notes: document.getElementById('man-notes').value,
-    fromIG: false, isFav: false, portions: portions, recurring: repeat
+    fromIG: false, isFav: false, recurring: repeat
   };
   addMealToDay(day, mealObj);
   if(repeat && repeat!=='none') applyRecurring(mealObj, day, repeat);
@@ -1716,11 +1676,6 @@ function startAnalyze(){
     document.getElementById('an-ingredients').value = r.ingredients;
     document.getElementById('an-steps').value = r.steps;
     document.getElementById('an-notes').value = r.notes||'';
-    // Auto-detect portions from recipe text
-    var fullText = r.title+' '+r.ingredients+' '+(r.steps||'');
-    var detected = detectPortions(fullText);
-    document.getElementById('an-portions').value = detected;
-    document.getElementById('an-portions-hint').textContent = detected>1 ? 'Erkannt: '+detected+' Portionen' : 'Standard: 1 Portion';
     document.getElementById('an-repeat').value = 'none';
     document.getElementById('ig-url').value='';
     document.getElementById('analyze-overlay').setAttribute('data-igurl', savedIgUrl);
@@ -1748,14 +1703,13 @@ function saveAnalyzed(){
   var preview = document.getElementById('an-img-preview');
   var imgData = preview.style.display !== 'none' ? preview.src : null;
   var igUrl = document.getElementById('analyze-overlay').getAttribute('data-igurl') || null;
-  var portions = parseInt(document.getElementById('an-portions').value)||1;
-  var repeat = document.getElementById('an-repeat').value;
+  var repeat = 'none';
   var mealObj = {
     title: title, emoji: emoji, imgData: imgData,
     ingredients: document.getElementById('an-ingredients').value,
     steps: document.getElementById('an-steps').value,
     notes: document.getElementById('an-notes').value,
-    fromIG: true, isFav: false, igUrl: igUrl, portions: portions, recurring: repeat
+    fromIG: true, isFav: false, igUrl: igUrl, recurring: repeat
   };
   addMealToDay(day, mealObj);
   if(repeat && repeat!=='none') applyRecurring(mealObj, day, repeat);
@@ -1851,11 +1805,9 @@ function openDetail(dayKey, idx){
   }
   document.getElementById('detail-ingredients').textContent = m.ingredients||'Keine Zutaten angegeben';
   document.getElementById('detail-steps').textContent = m.steps||'Keine Zubereitung angegeben';
-  var notesText = m.notes||'';
-  var portionsInfo = (m.portions&&m.portions>1) ? m.portions+' Portionen' : '1 Portion';
-  document.getElementById('detail-notes').innerHTML =
-    '<div style="font-size:.75rem;color:var(--sage);background:var(--sage-l);border-radius:8px;padding:.35rem .7rem;margin-bottom:.6rem;display:inline-block">'+portionsInfo+'</div>'+
-    (notesText ? '<div style="white-space:pre-wrap;font-size:.88rem;color:var(--muted);line-height:1.8">'+notesText+'</div>' : '<div style="font-size:.88rem;color:var(--muted)">Keine Notizen</div>');
+  document.getElementById('detail-notes').innerHTML = m.notes
+    ? '<div style="white-space:pre-wrap;font-size:.88rem;color:var(--muted);line-height:1.8">'+m.notes+'</div>'
+    : '<div style="font-size:.88rem;color:var(--muted)">Keine Notizen</div>';
   var isFav = m.isFav || favorites.some(function(f){ return f.title===m.title; });
   updateFavBtn(isFav);
   // Instagram link button
@@ -1870,6 +1822,16 @@ function openDetail(dayKey, idx){
   document.querySelectorAll('.dtab').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('tab-zutaten').classList.add('active');
   document.querySelectorAll('.dtab')[0].classList.add('active');
+  // Restore all buttons for calendar context
+  document.querySelector('#detail-overlay .detail-btn.danger').style.display = 'flex';
+  document.getElementById('detail-edit-btn').style.display = 'flex';
+  document.getElementById('detail-close-btn').style.display = 'flex';
+  var moveBtn = document.getElementById('detail-move-btn');
+  if(moveBtn){
+    moveBtn.style.display = 'flex';
+    moveBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Verschieben';
+    moveBtn.setAttribute('onclick','openMoveMeal()');
+  }
   // Always open in read mode
   detailEditActive = true; toggleDetailEdit(); // reset to read
   openOverlay('detail-overlay');
@@ -1898,7 +1860,6 @@ function toggleDetailEdit(){
     document.getElementById('edit-ingredients').value = m.ingredients || '';
     document.getElementById('edit-steps').value = m.steps || '';
     document.getElementById('edit-notes').value = m.notes || '';
-    document.getElementById('edit-portions').value = m.portions || 1;
     readMode.style.display = 'none';
     editMode.style.display = 'block';
     saveBtn.style.display = 'flex';
@@ -1925,7 +1886,6 @@ function saveDetailEdit(){
   m.ingredients = document.getElementById('edit-ingredients').value;
   m.steps = document.getElementById('edit-steps').value;
   m.notes = document.getElementById('edit-notes').value;
-  m.portions = parseInt(document.getElementById('edit-portions').value)||1;
   // Update read mode display
   document.getElementById('detail-modal-title').textContent = m.title;
   document.getElementById('detail-ingredients').textContent = m.ingredients || 'Keine Zutaten angegeben';
@@ -2394,19 +2354,63 @@ function renderFavsFiltered(list){
     grid.innerHTML='<div class="empty-state"><div class="empty-icon">'+(favorites.length===0?'🤍':'🔍')+'</div><p>'+(favorites.length===0?'Du hast noch keine Favoriten gespeichert.':'Keine Favoriten gefunden.')+'</p></div>';
     return;
   }
-  grid.innerHTML = list.map(function(f,i){
+  grid.innerHTML = list.map(function(f){
     var realIdx = favorites.indexOf(f);
-    return '<div class="fav-card">'+
+    return '<div class="fav-card" onclick="openFavDetail('+realIdx+')">'+
       '<div class="fav-img">'+(f.imgData?'<img src="'+f.imgData+'">':f.emoji)+'</div>'+
       '<div class="fav-info">'+
         '<div class="fav-name">'+f.title+'</div>'+
-        '<div class="fav-meta">'+(f.fromIG?'Via Instagram':'Manuell')+(f.portions&&f.portions>1?' · '+f.portions+' Portionen':'')+'</div>'+
+        '<div class="fav-meta">'+(f.fromIG?'Via Instagram':'Manuell')+'</div>'+
         '<div class="fav-actions">'+
-          '<button class="fav-action-btn" onclick="addFavToDay('+realIdx+')">+ Einplanen</button>'+
-          '<button class="fav-action-btn" onclick="removeFav('+realIdx+')" style="color:var(--red)">Entfernen</button>'+
+          '<button class="fav-action-btn" onclick="event.stopPropagation();addFavToDay('+realIdx+')">+ Einplanen</button>'+
+          '<button class="fav-action-btn" onclick="event.stopPropagation();removeFav('+realIdx+')" style="color:var(--red)">Entfernen</button>'+
         '</div>'+
       '</div></div>';
   }).join('');
+}
+
+function openFavDetail(idx){
+  var f = favorites[idx];
+  if(!f) return;
+  currentDetailKey = null;
+  currentDetailIdx = null;
+  var favIdx = idx;
+  document.getElementById('detail-modal-title').textContent = f.title;
+  if(f.imgData){
+    document.getElementById('detail-img-wrap').innerHTML = '<img src="'+f.imgData+'" style="width:100%;height:100%;object-fit:cover">';
+  } else {
+    document.getElementById('detail-img-wrap').innerHTML =
+      '<span>'+f.emoji+'</span>'+
+      (f.fromIG?'<div class="ig-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</div>':'');
+  }
+  document.getElementById('detail-ingredients').textContent = f.ingredients||'Keine Zutaten angegeben';
+  document.getElementById('detail-steps').textContent = f.steps||'Keine Zubereitung angegeben';
+  document.getElementById('detail-notes').innerHTML = f.notes
+    ? '<div style="white-space:pre-wrap;font-size:.88rem;color:var(--muted);line-height:1.8">'+f.notes+'</div>'
+    : '<div style="font-size:.88rem;color:var(--muted)">Keine Notizen</div>';
+  updateFavBtn(true);
+  // IG link
+  var igBtn = document.getElementById('detail-ig-link-btn');
+  igBtn.style.display = f.igUrl ? 'inline-flex' : 'none';
+  if(f.igUrl) igBtn.setAttribute('data-url', f.igUrl);
+  // Buttons for fav context: hide delete, hide edit, show "Einplanen"
+  document.querySelector('#detail-overlay .detail-btn.danger').style.display = 'none';
+  document.getElementById('detail-edit-btn').style.display = 'none';
+  document.getElementById('detail-save-btn').style.display = 'none';
+  document.getElementById('detail-close-btn').style.display = 'flex';
+  var moveBtn = document.getElementById('detail-move-btn');
+  moveBtn.textContent = '+ Einplanen';
+  moveBtn.setAttribute('onclick', 'addFavToDay('+favIdx+');closeOverlay(\'detail-overlay\')');
+  moveBtn.style.display = 'flex';
+  // Reset tabs
+  tabNames.forEach(function(t){ document.getElementById('tab-'+t).classList.remove('active'); });
+  document.querySelectorAll('.dtab').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-zutaten').classList.add('active');
+  document.querySelectorAll('.dtab')[0].classList.add('active');
+  document.getElementById('detail-read-mode').style.display = 'block';
+  document.getElementById('detail-edit-mode').style.display = 'none';
+  detailEditActive = false;
+  openOverlay('detail-overlay');
 }
 
 // ── SHARE SHOPPING LIST ──

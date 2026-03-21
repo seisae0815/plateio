@@ -78,6 +78,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .btn-ghost:hover{background:rgba(255,255,255,0.28)}
 .btn-accent{background:var(--accent);border:1px solid var(--accent);color:var(--dark);padding:0.45rem 1.3rem;border-radius:40px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all .2s}
 .btn-accent:hover{background:#b8985e}
+/* Mobile landing nav — buttons at bottom of hero */
+.hero-auth-mobile{display:none;position:absolute;bottom:3.5rem;left:0;right:0;z-index:10;padding:0 1.5rem;gap:10px}
+@media(max-width:600px){
+  .nav{padding:1rem 1.2rem}
+  .nav-actions{display:none}
+  .hero-auth-mobile{display:flex}
+  .hero-auth-mobile .btn-ghost,.hero-auth-mobile .btn-accent{flex:1;text-align:center;padding:.75rem;font-size:.9rem}
+}
 
 /* Hero Slider */
 .hero{position:relative;height:520px;overflow:hidden}
@@ -170,7 +178,26 @@ footer p{font-size:.78rem;color:var(--muted)}
 .footer-link{color:var(--muted);cursor:pointer;text-decoration:none;transition:color .2s}
 .footer-link:hover{color:var(--sage)}
 
-/* Shopping list two-column layout */
+/* Mobile bottom navigation */
+.mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:150;padding-bottom:env(safe-area-inset-bottom)}
+.mbn-inner{display:flex;align-items:stretch}
+.mbn-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:.6rem .5rem;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.6rem;color:var(--muted);transition:color .15s;min-height:56px}
+.mbn-btn.active{color:var(--sage)}
+.mbn-btn svg{flex-shrink:0}
+.mbn-label{font-size:.58rem;font-weight:500;letter-spacing:.2px}
+@media(max-width:700px){
+  .mobile-bottom-nav{display:block}
+  .app-nav .app-nav-links{display:none}
+  .app-page{padding:1rem 1rem 5rem}
+  .shop-layout{grid-template-columns:1fr!important}
+  .shop-col-meals{order:-1}
+  .shop-meal-filter-item{padding:.6rem .8rem}
+  .import-bar{padding:1.1rem 1.1rem}
+  .week-grid{grid-template-columns:repeat(4,1fr)!important}
+}
+@media(max-width:480px){
+  .week-grid{grid-template-columns:repeat(3,1fr)!important}
+}
 .shop-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start}
 .shop-col-list{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.2rem}
 .shop-col-meals{display:flex;flex-direction:column;gap:8px}
@@ -305,12 +332,15 @@ footer p{font-size:.78rem;color:var(--muted)}
 .day-num{font-size:.82rem;font-weight:500;color:var(--text)}
 .day-num.tod{background:var(--sage);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem}
 .day-body{padding:.5rem;flex:1;display:flex;flex-direction:column;gap:5px}
-.meal-card{border-radius:8px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--sage-l);border:1px solid transparent}
-.meal-card:hover{border-color:var(--sage-m);transform:translateY(-1px);box-shadow:0 2px 8px rgba(74,124,89,.12)}
-.meal-emoji{width:100%;height:58px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;background:var(--sage-l)}
-.meal-has-img{width:100%;height:58px;object-fit:cover;display:block}
-.meal-name{padding:.3rem .5rem;font-size:.62rem;font-weight:500;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.add-btn{width:100%;border:1.5px dashed var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;padding:.55rem;display:flex;align-items:center;justify-content:center;gap:4px;font-size:.72rem;font-family:'DM Sans',sans-serif;transition:all .2s;margin-top:auto}
+.meal-card{border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.meal-card:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.15)}
+.meal-img-area{width:100%;height:70px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.meal-emoji-glow{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;opacity:.25;filter:blur(10px);transform:scale(1.3);pointer-events:none}
+.meal-emoji-main{position:relative;z-index:1;font-size:2.1rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))}
+.meal-has-img{width:100%;height:70px;object-fit:cover;display:block}
+.meal-name-bar{padding:.3rem .55rem;font-size:.62rem;font-weight:500;color:#fff;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(0,0,0,.38);display:flex;align-items:center;gap:4px}
+.meal-src-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-left:auto}
+.add-btn{width:100%;border:1.5px dashed var(--border);border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;padding:.65rem;display:flex;align-items:center;justify-content:center;gap:4px;font-size:.72rem;font-family:'DM Sans',sans-serif;transition:all .2s;margin-top:auto}
 .add-btn:hover{border-color:var(--sage);color:var(--sage);background:var(--sage-l)}
 
 /* Add options popup */
@@ -494,6 +524,11 @@ footer p{font-size:.78rem;color:var(--muted)}
       <div class="sdot active" onclick="goSlide(0)"></div>
       <div class="sdot" onclick="goSlide(1)"></div>
       <div class="sdot" onclick="goSlide(2)"></div>
+    </div>
+    <!-- Mobile auth buttons at bottom of hero -->
+    <div class="hero-auth-mobile">
+      <button class="btn-ghost" onclick="openAuth('login')">Anmelden</button>
+      <button class="btn-accent" onclick="openAuth('register')">Kostenlos starten</button>
     </div>
   </div>
 
@@ -784,6 +819,48 @@ footer p{font-size:.78rem;color:var(--muted)}
 </div>
 
 <!-- ══════════════════════════════════════
+     ONBOARDING MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="onboarding-overlay">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-body" style="padding:2rem">
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div style="font-size:3rem;margin-bottom:.6rem">🍽️</div>
+        <div style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--dark);margin-bottom:.4rem">Willkommen bei Plateio!</div>
+        <div style="font-size:.86rem;color:var(--muted);line-height:1.6">In 3 einfachen Schritten zu deinem ersten Wochenplan.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:1.8rem">
+        <div style="display:flex;gap:14px;align-items:flex-start;background:var(--sage-l);border-radius:12px;padding:1rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--sage);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:500;flex-shrink:0">1</div>
+          <div>
+            <div style="font-size:.9rem;font-weight:500;margin-bottom:2px">Link von Instagram kopieren</div>
+            <div style="font-size:.78rem;color:var(--muted)">Öffne einen Food-Post und kopiere den Link aus dem Browser oder teile ihn direkt.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;background:var(--accent-l);border-radius:12px;padding:1rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--dark);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:500;flex-shrink:0">2</div>
+          <div>
+            <div style="font-size:.9rem;font-weight:500;margin-bottom:2px">Link einfügen & analysieren</div>
+            <div style="font-size:.78rem;color:var(--muted)">Plateio erkennt Titel, Zutaten und Zubereitung automatisch.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;background:#e6f1fb;border-radius:12px;padding:1rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:#378add;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:500;flex-shrink:0">3</div>
+          <div>
+            <div style="font-size:.9rem;font-weight:500;margin-bottom:2px">Tag wählen & speichern</div>
+            <div style="font-size:.78rem;color:var(--muted)">Das Rezept erscheint sofort in deinem Wochenplan.</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-full" onclick="closeOnboarding()">Los geht's! →</button>
+      <div style="text-align:center;margin-top:.8rem">
+        <a style="font-size:.75rem;color:var(--muted);cursor:pointer" onclick="closeOnboarding()">Überspringen</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
      AUTH MODAL
 ══════════════════════════════════════ -->
 <div class="overlay" id="auth-overlay">
@@ -859,25 +936,43 @@ footer p{font-size:.78rem;color:var(--muted)}
       HelloFresh — Frische Zutaten direkt nach Hause. Jetzt 3 Boxen gratis testen!
     </div>
 
-    <div class="import-bar">
-      <span class="import-label">Instagram Rezept importieren</span>
+    <div class="import-bar" id="import-bar">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:.8rem">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--sage);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <div>
+          <span class="import-label" style="margin-bottom:0;display:block">Rezept importieren</span>
+          <span style="font-size:.72rem;color:var(--muted)">Instagram · Pinterest · Facebook</span>
+        </div>
+      </div>
       <div class="import-row">
-        <input type="url" class="import-input" id="ig-url" placeholder="https://www.instagram.com/p/...">
+        <input type="url" class="import-input" id="ig-url" placeholder="Link hier einfügen..." oninput="validateLinkInput(this)">
         <button class="import-btn" id="analyze-btn" onclick="startAnalyze()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           Analysieren
         </button>
       </div>
-      <div class="import-hint" id="import-hint">💡 Füge einen Instagram-Link ein — plateio erkennt das Rezept automatisch</div>
+      <div class="import-hint" id="import-hint" style="margin-top:.5rem">Unterstützte Plattformen:
+        <span style="color:#e1306c;font-weight:500">Instagram</span> ·
+        <span style="color:#e60023;font-weight:500">Pinterest</span> ·
+        <span style="color:#1877f2;font-weight:500">Facebook</span>
+      </div>
+      <div id="link-invalid-warn" style="display:none;margin-top:.5rem;font-size:.75rem;color:var(--red);background:var(--red-l);border-radius:8px;padding:.4rem .8rem">
+        ⚠️ Dieser Link wird nicht erkannt. Bitte einen Instagram-, Pinterest- oder Facebook-Link einfügen.
+      </div>
       <div class="limit-warn" id="limit-warn">⚠️ Du hast <span id="analyses-left">0</span> von 5 Analysen diesen Monat verbraucht. <a style="color:var(--sage);cursor:pointer" onclick="openOverlay('upgrade-overlay')">Upgrade auf Pro</a> für unbegrenzte Analysen.</div>
     </div>
 
     <div class="week-hdr">
-      <div class="week-label" id="week-range-label">Diese Woche</div>
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:1.2rem;font-weight:300;color:var(--dark)">Mein Wochenplan</div>
+        <div class="week-label" id="week-range-label" style="margin-top:2px">Diese Woche</div>
+      </div>
       <div class="week-nav">
-        <button class="wnav-btn" onclick="shiftWeek(-1)">‹</button>
+        <button class="wnav-btn" onclick="shiftWeek(-1)" title="Vorherige Woche">‹</button>
         <button class="wnav-today" onclick="resetWeek()">Heute</button>
-        <button class="wnav-btn" onclick="shiftWeek(1)">›</button>
+        <button class="wnav-btn" onclick="shiftWeek(1)" title="Nächste Woche">›</button>
       </div>
     </div>
 
@@ -915,12 +1010,13 @@ footer p{font-size:.78rem;color:var(--muted)}
     <div id="shop-content">
       <div class="shop-hdr">
         <div class="shop-week-info" id="shop-week-info">Einkaufsliste für diese Woche</div>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="shop-generate-btn" style="background:transparent;color:var(--sage);border:1px solid var(--sage)" onclick="checkAllShopItems()">✓ Alle erledigt</button>
           <button class="shop-generate-btn" style="background:transparent;color:var(--sage);border:1px solid var(--sage)" onclick="openOverlay('share-overlay')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
             Teilen
           </button>
-          <button class="shop-generate-btn" onclick="generateShopList()">↺ Aktualisieren</button>
+          <button class="shop-generate-btn" onclick="generateShopList()">↺ Neu</button>
         </div>
       </div>
       <!-- Two column layout: left = combined list, right = meal filter -->
@@ -944,6 +1040,28 @@ footer p{font-size:.78rem;color:var(--muted)}
       <a class="footer-link" href="#" onclick="event.preventDefault();openLegal('agb')">AGB</a> ·
       <a class="footer-link" href="#" onclick="event.preventDefault();openLegal('impressum')">Impressum</a>
     </p>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <div class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <div class="mbn-inner">
+      <button class="mbn-btn active" id="mbn-plan" onclick="showAppPage('plan')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span class="mbn-label">Wochenplan</span>
+      </button>
+      <button class="mbn-btn" id="mbn-favs" onclick="showAppPage('favs')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="mbn-label">Favoriten</span>
+      </button>
+      <button class="mbn-btn" id="mbn-shop" onclick="showAppPage('shop')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="mbn-label">Einkaufen</span>
+      </button>
+      <button class="mbn-btn" id="mbn-account" onclick="openOverlay('account-overlay')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="mbn-label">Account</span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1407,7 +1525,6 @@ function doAuth(){
   closeOverlay('auth-overlay');
   document.getElementById('page-landing').style.display = 'none';
   document.getElementById('page-app').style.display = 'block';
-  // Check if pro mode should be active (URL hash or email-based)
   var email = document.getElementById('auth-email').value.trim().toLowerCase();
   if(window.location.hash === '#pro' || window.location.hash === '#owner' || proEmails.indexOf(email) >= 0){
     activatePro('owner');
@@ -1416,6 +1533,28 @@ function doAuth(){
   renderFavs();
   renderShopPage();
   updateAnalysisHint();
+  // Show onboarding for new registrations
+  if(authMode === 'register'){
+    setTimeout(function(){ openOverlay('onboarding-overlay'); }, 400);
+  }
+}
+
+function closeOnboarding(){
+  closeOverlay('onboarding-overlay');
+  setTimeout(function(){
+    var inp = document.getElementById('ig-url');
+    if(inp) inp.focus();
+  }, 300);
+}
+
+// ── LINK VALIDATION ──
+var supportedDomains = ['instagram.com','pinterest.com','pin.it','facebook.com','fb.com','fb.watch'];
+function validateLinkInput(input){
+  var val = input.value.trim();
+  var warn = document.getElementById('link-invalid-warn');
+  if(!val){ warn.style.display='none'; return; }
+  var isSupported = supportedDomains.some(function(d){ return val.includes(d); });
+  warn.style.display = (!isSupported && val.length > 10) ? 'block' : 'none';
 }
 
 // ── PRO ACCESS CONTROL ──
@@ -1451,14 +1590,47 @@ function showAppPage(page){
   ['plan','favs','shop'].forEach(function(p){
     document.getElementById('page-'+p).classList.remove('active');
     document.getElementById('nav-'+p).classList.remove('active');
+    var mbn = document.getElementById('mbn-'+p);
+    if(mbn) mbn.classList.remove('active');
   });
   document.getElementById('page-'+page).classList.add('active');
   document.getElementById('nav-'+page).classList.add('active');
+  var mbnActive = document.getElementById('mbn-'+page);
+  if(mbnActive) mbnActive.classList.add('active');
   if(page==='favs') renderFavs();
   if(page==='shop') renderShopPage();
 }
 
-// ── WEEK GRID ──
+// ── MEAL CARD COLOR ──
+function getMealBg(emoji){
+  var map = {
+    '🍝':'#3a2418','🍜':'#2d1f0e','🍛':'#3a2c10','🍲':'#1e2d1e','🥘':'#2a1a0e',
+    '🥗':'#1a2d1a','🥑':'#1e3020','🌿':'#1a2d1a','🥦':'#1e2d1e',
+    '🍕':'#3a1a0e','🌮':'#3a2810','🌯':'#3a2810','🥙':'#2d2010',
+    '🍣':'#2d1a1a','🐟':'#1a2035','🦐':'#3a2020','🦑':'#2a2035',
+    '🍳':'#2d2010','🥚':'#2d2818','🧇':'#3a2810',
+    '🥩':'#3a1818','🍗':'#3a2418','🥓':'#3a1e1e',
+    '🍲':'#1e2818','🫕':'#2d2010','🥣':'#2d2418',
+    '🍦':'#2d2d2d','🎂':'#3a1a2d','🍰':'#3a1a2d','🍮':'#3a2a10',
+    '🍵':'#1a2d1e','☕':'#2d1e0e','🧃':'#1e2d1a',
+  };
+  return map[emoji] || '#2a3828';
+}
+
+// ── PLATFORM DETECTION ──
+function detectPlatform(url){
+  if(!url) return 'manual';
+  if(url.includes('instagram.com')) return 'instagram';
+  if(url.includes('pinterest.com') || url.includes('pin.it')) return 'pinterest';
+  if(url.includes('facebook.com') || url.includes('fb.com') || url.includes('fb.watch')) return 'facebook';
+  if(url.includes('tiktok.com')) return 'tiktok';
+  return 'manual';
+}
+
+function getPlatformLabel(platform){
+  var labels = {instagram:'Instagram',pinterest:'Pinterest',facebook:'Facebook',tiktok:'TikTok',manual:''};
+  return labels[platform]||'';
+}
 var DAY_NAMES = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 function getWeekDays(){
   var today = new Date(); today.setHours(0,0,0,0);
@@ -1502,10 +1674,15 @@ function buildWeekGrid(){
 
     var mealsHtml = '';
     dayMeals.forEach(function(m, mi){
-      var imgHtml = m.imgData
+      var bg = getMealBg(m.emoji);
+      var srcDot = '';
+      if(m.fromIG) srcDot = '<span class="meal-src-dot" style="background:#e1306c" title="Instagram"></span>';
+      else if(m.fromPinterest) srcDot = '<span class="meal-src-dot" style="background:#e60023" title="Pinterest"></span>';
+      else if(m.fromFacebook) srcDot = '<span class="meal-src-dot" style="background:#1877f2" title="Facebook"></span>';
+      var imgArea = m.imgData
         ? '<img class="meal-has-img" src="'+m.imgData+'">'
-        : '<div class="meal-emoji">'+m.emoji+'</div>';
-      mealsHtml += '<div class="meal-card" onclick="openDetail(\''+key+'\','+mi+')">'+imgHtml+'<div class="meal-name">'+m.title+'</div></div>';
+        : '<div class="meal-img-area" style="background:'+bg+'"><div class="meal-emoji-glow">'+m.emoji+'</div><div class="meal-emoji-main">'+m.emoji+'</div></div>';
+      mealsHtml += '<div class="meal-card" onclick="openDetail(\''+key+'\','+mi+')">'+imgArea+'<div class="meal-name-bar">'+m.title+srcDot+'</div></div>';
     });
 
     var addHtml = '';
@@ -1518,6 +1695,19 @@ function buildWeekGrid(){
       '<div class="day-body">'+mealsHtml+addHtml+'</div>';
     grid.appendChild(card);
   });
+
+  // Empty state — show hint if no meals at all this week
+  var totalMeals = 0;
+  getWeekDays().forEach(function(d){ totalMeals += (meals[d.toDateString()]||[]).length; });
+  var existingHint = document.getElementById('week-empty-hint');
+  if(existingHint) existingHint.remove();
+  if(totalMeals === 0){
+    var hint = document.createElement('div');
+    hint.id = 'week-empty-hint';
+    hint.style.cssText = 'grid-column:1/-1;text-align:center;padding:1.5rem;color:var(--muted);font-size:.88rem;line-height:1.7;background:#fff;border-radius:12px;border:1.5px dashed var(--border)';
+    hint.innerHTML = '<div style="font-size:2rem;margin-bottom:.5rem">👆</div>Füge deinen ersten Link oben ein — Plateio analysiert das Rezept automatisch und trägt es hier ein.';
+    grid.appendChild(hint);
+  }
 }
 
 function populateDateSelects(days){
@@ -1657,8 +1847,9 @@ function startAnalyze(){
     return;
   }
   var url = document.getElementById('ig-url').value.trim();
-  if(!url){ showToast('Bitte einen Instagram-Link einfügen'); return; }
+  if(!url){ showToast('Bitte einen Link einfügen'); return; }
   var savedIgUrl = url;
+  var platform = detectPlatform(url);
   document.getElementById('analyze-btn').disabled = true;
   document.getElementById('loading-text').textContent = 'Rezept wird analysiert...';
   document.getElementById('loading-wrap').classList.add('open');
@@ -1679,6 +1870,10 @@ function startAnalyze(){
     document.getElementById('an-repeat').value = 'none';
     document.getElementById('ig-url').value='';
     document.getElementById('analyze-overlay').setAttribute('data-igurl', savedIgUrl);
+    document.getElementById('analyze-overlay').setAttribute('data-platform', platform);
+    // Update the IG badge label
+    var badge = document.querySelector('#analyze-overlay .ig-badge');
+    if(badge) badge.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> '+getPlatformLabel(platform);
     openOverlay('analyze-overlay');
   }, 2400);
 }
@@ -1703,13 +1898,18 @@ function saveAnalyzed(){
   var preview = document.getElementById('an-img-preview');
   var imgData = preview.style.display !== 'none' ? preview.src : null;
   var igUrl = document.getElementById('analyze-overlay').getAttribute('data-igurl') || null;
+  var platform = document.getElementById('analyze-overlay').getAttribute('data-platform') || 'manual';
   var repeat = 'none';
   var mealObj = {
     title: title, emoji: emoji, imgData: imgData,
     ingredients: document.getElementById('an-ingredients').value,
     steps: document.getElementById('an-steps').value,
     notes: document.getElementById('an-notes').value,
-    fromIG: true, isFav: false, igUrl: igUrl, recurring: repeat
+    fromIG: platform==='instagram',
+    fromPinterest: platform==='pinterest',
+    fromFacebook: platform==='facebook',
+    fromTikTok: platform==='tiktok',
+    isFav: false, igUrl: igUrl, platform: platform, recurring: repeat
   };
   addMealToDay(day, mealObj);
   if(repeat && repeat!=='none') applyRecurring(mealObj, day, repeat);
@@ -1801,7 +2001,7 @@ function openDetail(dayKey, idx){
   } else {
     document.getElementById('detail-img-wrap').innerHTML =
       '<span id="detail-emoji">'+m.emoji+'</span>'+
-      (m.fromIG?'<div class="ig-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</div>':'')+photoBtn;
+      (m.fromIG||m.fromPinterest||m.fromFacebook||m.fromTikTok?'<div class="ig-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>'+(m.fromPinterest?'Pinterest':m.fromFacebook?'Facebook':m.fromTikTok?'TikTok':'Instagram')+'</div>':'')+photoBtn;
   }
   document.getElementById('detail-ingredients').textContent = m.ingredients||'Keine Zutaten angegeben';
   document.getElementById('detail-steps').textContent = m.steps||'Keine Zubereitung angegeben';
@@ -2081,6 +2281,13 @@ function toggleShopMeal(mealId){
 function toggleCombinedItem(sid){
   var el = document.getElementById(sid);
   if(el) el.classList.toggle('checked');
+}
+
+function checkAllShopItems(){
+  document.querySelectorAll('#shop-list .shop-combined-item').forEach(function(el){
+    el.classList.add('checked');
+  });
+  showToast('Alle Zutaten als erledigt markiert ✓');
 }
 
 function toggleMealBlock(mealId){

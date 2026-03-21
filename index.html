@@ -653,7 +653,13 @@ footer p{font-size:.78rem;color:var(--muted)}
     <div class="modal-body">
       <!-- Avatar -->
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border)">
-        <div style="width:52px;height:52px;border-radius:50%;background:var(--sage);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:500;flex-shrink:0" id="acc-avatar-big">H</div>
+        <div style="position:relative;cursor:pointer" onclick="document.getElementById('avatar-upload').click()">
+          <div style="width:52px;height:52px;border-radius:50%;background:var(--sage);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:500;flex-shrink:0;overflow:hidden" id="acc-avatar-big">H</div>
+          <div style="position:absolute;bottom:0;right:0;width:18px;height:18px;border-radius:50%;background:var(--sage);border:2px solid #fff;display:flex;align-items:center;justify-content:center">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+          <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+        </div>
         <div>
           <div style="font-size:.95rem;font-weight:500" id="acc-name-display">Hannes</div>
           <div style="font-size:.8rem;color:var(--muted)" id="acc-email-display">hannes@plateio.app</div>
@@ -800,6 +806,9 @@ footer p{font-size:.78rem;color:var(--muted)}
         <input type="password" id="auth-pw" placeholder="••••••••" value="demo1234">
       </div>
       <button class="btn-full" id="auth-submit-btn" onclick="doAuth()">Anmelden</button>
+      <div style="text-align:center;margin-top:.6rem">
+        <a id="forgot-pw-link" style="font-size:.78rem;color:var(--sage);cursor:pointer" onclick="openForgotPw()">Passwort vergessen?</a>
+      </div>
       <div class="auth-switch" id="auth-switch-text">
         Noch kein Konto? <a onclick="toggleAuthMode()">Registrieren</a>
       </div>
@@ -880,6 +889,12 @@ footer p{font-size:.78rem;color:var(--muted)}
     <div class="page-hdr">
       <div class="page-title">Meine Favoriten</div>
     </div>
+    <div style="display:flex;gap:10px;margin-bottom:1.2rem">
+      <div style="flex:1;position:relative">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="position:absolute;left:.8rem;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="favs-search" placeholder="Favoriten durchsuchen..." oninput="filterFavs()" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:.65rem 1rem .65rem 2.2rem;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;background:var(--cream)">
+      </div>
+    </div>
     <div class="favs-grid" id="favs-grid"></div>
   </div>
 
@@ -900,7 +915,13 @@ footer p{font-size:.78rem;color:var(--muted)}
     <div id="shop-content">
       <div class="shop-hdr">
         <div class="shop-week-info" id="shop-week-info">Einkaufsliste für diese Woche</div>
-        <button class="shop-generate-btn" onclick="generateShopList()">↺ Aktualisieren</button>
+        <div style="display:flex;gap:8px">
+          <button class="shop-generate-btn" style="background:transparent;color:var(--sage);border:1px solid var(--sage)" onclick="openOverlay('share-overlay')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Teilen
+          </button>
+          <button class="shop-generate-btn" onclick="generateShopList()">↺ Aktualisieren</button>
+        </div>
       </div>
       <!-- Two column layout: left = combined list, right = meal filter -->
       <div class="shop-layout">
@@ -995,6 +1016,25 @@ footer p{font-size:.78rem;color:var(--muted)}
         <label>Notizen</label>
         <textarea id="man-notes" placeholder="Eigene Notizen, Variationen..." rows="2"></textarea>
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field">
+          <label>Portionen</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button type="button" onclick="changePortions('man',-1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="number" id="man-portions" value="1" min="1" max="20" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:.4rem;font-family:'DM Sans',sans-serif">
+            <button type="button" onclick="changePortions('man',1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Wiederholen</label>
+          <select id="man-repeat" style="height:36px">
+            <option value="none">Nicht wiederholen</option>
+            <option value="weekly">Jede Woche</option>
+            <option value="biweekly">Alle 2 Wochen</option>
+            <option value="monthly">Jeden Monat</option>
+          </select>
+        </div>
+      </div>
       <div class="field">
         <label>Tag im Kalender</label>
         <select id="man-date"></select>
@@ -1073,15 +1113,28 @@ footer p{font-size:.78rem;color:var(--muted)}
         <label>Notizen</label>
         <textarea id="edit-notes" rows="3" placeholder="Eigene Notizen, Variationen, Tipps..."></textarea>
       </div>
+      <div class="field">
+        <label>Portionen</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button type="button" onclick="changePortions('edit',-1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">−</button>
+          <input type="number" id="edit-portions" value="1" min="1" max="20" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:.4rem;font-family:'DM Sans',sans-serif">
+          <button type="button" onclick="changePortions('edit',1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">+</button>
+          <span style="font-size:.78rem;color:var(--muted)">Portion(en)</span>
+        </div>
+      </div>
     </div>
 
     <div class="detail-actions" style="flex-shrink:0">
       <button class="detail-btn danger" onclick="deleteMeal()">Entfernen</button>
+      <button class="detail-btn" onclick="openMoveMeal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+        Verschieben
+      </button>
       <button class="detail-btn" id="detail-ig-link-btn" onclick="openIgLink()" style="display:none">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        Instagram öffnen
+        Instagram
       </button>
-      <button class="detail-btn" id="detail-save-btn" onclick="saveDetailEdit()" style="display:none;background:var(--sage);color:#fff;border-color:var(--sage)">Änderungen speichern</button>
+      <button class="detail-btn" id="detail-save-btn" onclick="saveDetailEdit()" style="display:none;background:var(--sage);color:#fff;border-color:var(--sage)">Speichern</button>
       <button class="detail-btn primary" id="detail-close-btn" onclick="closeOverlay('detail-overlay')">Schließen</button>
     </div>
   </div>
@@ -1138,6 +1191,26 @@ footer p{font-size:.78rem;color:var(--muted)}
         <label>Notizen</label>
         <textarea id="an-notes" rows="2"></textarea>
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field">
+          <label>Portionen</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button type="button" onclick="changePortions('an',-1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="number" id="an-portions" value="1" min="1" max="20" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:.4rem;font-family:'DM Sans',sans-serif">
+            <button type="button" onclick="changePortions('an',1)" style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:4px" id="an-portions-hint">Automatisch erkannt</div>
+        </div>
+        <div class="field">
+          <label>Wiederholen</label>
+          <select id="an-repeat" style="height:36px">
+            <option value="none">Nicht wiederholen</option>
+            <option value="weekly">Jede Woche</option>
+            <option value="biweekly">Alle 2 Wochen</option>
+            <option value="monthly">Jeden Monat</option>
+          </select>
+        </div>
+      </div>
       <div class="field">
         <label>Tag im Kalender</label>
         <select id="an-date"></select>
@@ -1161,6 +1234,83 @@ footer p{font-size:.78rem;color:var(--muted)}
       <div class="field" style="margin-top:1rem">
         <label>Tag im Kalender</label>
         <select id="fromfavs-date"></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MOVE MEAL MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="move-overlay">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head">
+      <div class="modal-title">Gericht verschieben</div>
+      <button class="modal-close" onclick="closeOverlay('move-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.84rem;color:var(--muted);margin-bottom:1rem">An welchen Tag soll das Gericht verschoben werden?</p>
+      <div class="field">
+        <label>Neuer Tag</label>
+        <select id="move-date"></select>
+      </div>
+      <button class="btn-full" onclick="confirmMoveMeal()">Verschieben</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FORGOT PASSWORD MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="forgotpw-overlay">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head">
+      <div class="modal-title">Passwort zurücksetzen</div>
+      <button class="modal-close" onclick="closeOverlay('forgotpw-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.84rem;color:var(--muted);margin-bottom:1rem">Gib deine E-Mail-Adresse ein. Du erhältst einen Link zum Zurücksetzen deines Passworts.</p>
+      <div class="field">
+        <label>E-Mail</label>
+        <input type="email" id="forgotpw-email" placeholder="deine@email.at">
+      </div>
+      <button class="btn-full" onclick="sendPasswordReset()">Reset-Link senden</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SHARE SHOPPING LIST MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="share-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head">
+      <div class="modal-title">Einkaufsliste teilen</div>
+      <button class="modal-close" onclick="closeOverlay('share-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="acc-item" style="border:1px solid var(--border);border-radius:10px" onclick="shareListWhatsApp()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <div style="margin-left:.5rem">
+            <div style="font-size:.9rem;font-weight:500;color:var(--text)">Per WhatsApp teilen</div>
+            <div style="font-size:.75rem;color:var(--muted)">Liste als Text verschicken</div>
+          </div>
+        </button>
+        <button class="acc-item" style="border:1px solid var(--border);border-radius:10px" onclick="copyListToClipboard()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <div style="margin-left:.5rem">
+            <div style="font-size:.9rem;font-weight:500;color:var(--text)">In Zwischenablage kopieren</div>
+            <div style="font-size:.75rem;color:var(--muted)">Dann in beliebige App einfügen</div>
+          </div>
+        </button>
+        <button class="acc-item" style="border:1px solid var(--border);border-radius:10px" onclick="exportListPDF()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <div style="margin-left:.5rem">
+            <div style="font-size:.9rem;font-weight:500;color:var(--text)">Als Text exportieren</div>
+            <div style="font-size:.75rem;color:var(--muted)">Speichern oder ausdrucken</div>
+          </div>
+        </button>
       </div>
     </div>
   </div>
@@ -1286,6 +1436,7 @@ function setAuthUI(){
   document.getElementById('auth-modal-title').textContent = isL ? 'Anmelden' : 'Registrieren';
   document.getElementById('auth-submit-btn').textContent = isL ? 'Anmelden' : 'Registrieren';
   document.getElementById('auth-name-field').style.display = isL ? 'none' : 'block';
+  document.getElementById('forgot-pw-link').style.display = isL ? 'block' : 'none';
   document.getElementById('auth-switch-text').innerHTML = isL
     ? 'Noch kein Konto? <a onclick="toggleAuthMode()">Registrieren</a>'
     : 'Bereits registriert? <a onclick="toggleAuthMode()">Anmelden</a>';
@@ -1467,13 +1618,17 @@ function saveManual(){
   var emoji = document.getElementById('man-emoji').value.trim() || '🍽️';
   var imgPreview = document.getElementById('man-img-preview');
   var imgData = imgPreview.style.display!=='none' ? imgPreview.src : null;
-  addMealToDay(day, {
+  var portions = parseInt(document.getElementById('man-portions').value)||1;
+  var repeat = document.getElementById('man-repeat').value;
+  var mealObj = {
     title: title, emoji: emoji, imgData: imgData,
     ingredients: document.getElementById('man-ingredients').value,
     steps: document.getElementById('man-steps').value,
     notes: document.getElementById('man-notes').value,
-    fromIG: false, isFav: false
-  });
+    fromIG: false, isFav: false, portions: portions, recurring: repeat
+  };
+  addMealToDay(day, mealObj);
+  if(repeat && repeat!=='none') applyRecurring(mealObj, day, repeat);
   closeOverlay('manual-overlay');
 }
 
@@ -1561,6 +1716,12 @@ function startAnalyze(){
     document.getElementById('an-ingredients').value = r.ingredients;
     document.getElementById('an-steps').value = r.steps;
     document.getElementById('an-notes').value = r.notes||'';
+    // Auto-detect portions from recipe text
+    var fullText = r.title+' '+r.ingredients+' '+(r.steps||'');
+    var detected = detectPortions(fullText);
+    document.getElementById('an-portions').value = detected;
+    document.getElementById('an-portions-hint').textContent = detected>1 ? 'Erkannt: '+detected+' Portionen' : 'Standard: 1 Portion';
+    document.getElementById('an-repeat').value = 'none';
     document.getElementById('ig-url').value='';
     document.getElementById('analyze-overlay').setAttribute('data-igurl', savedIgUrl);
     openOverlay('analyze-overlay');
@@ -1587,13 +1748,17 @@ function saveAnalyzed(){
   var preview = document.getElementById('an-img-preview');
   var imgData = preview.style.display !== 'none' ? preview.src : null;
   var igUrl = document.getElementById('analyze-overlay').getAttribute('data-igurl') || null;
-  addMealToDay(day, {
+  var portions = parseInt(document.getElementById('an-portions').value)||1;
+  var repeat = document.getElementById('an-repeat').value;
+  var mealObj = {
     title: title, emoji: emoji, imgData: imgData,
     ingredients: document.getElementById('an-ingredients').value,
     steps: document.getElementById('an-steps').value,
     notes: document.getElementById('an-notes').value,
-    fromIG: true, isFav: false, igUrl: igUrl
-  });
+    fromIG: true, isFav: false, igUrl: igUrl, portions: portions, recurring: repeat
+  };
+  addMealToDay(day, mealObj);
+  if(repeat && repeat!=='none') applyRecurring(mealObj, day, repeat);
   closeOverlay('analyze-overlay');
 }
 
@@ -1686,7 +1851,11 @@ function openDetail(dayKey, idx){
   }
   document.getElementById('detail-ingredients').textContent = m.ingredients||'Keine Zutaten angegeben';
   document.getElementById('detail-steps').textContent = m.steps||'Keine Zubereitung angegeben';
-  document.getElementById('detail-notes').textContent = m.notes||'Keine Notizen';
+  var notesText = m.notes||'';
+  var portionsInfo = (m.portions&&m.portions>1) ? m.portions+' Portionen' : '1 Portion';
+  document.getElementById('detail-notes').innerHTML =
+    '<div style="font-size:.75rem;color:var(--sage);background:var(--sage-l);border-radius:8px;padding:.35rem .7rem;margin-bottom:.6rem;display:inline-block">'+portionsInfo+'</div>'+
+    (notesText ? '<div style="white-space:pre-wrap;font-size:.88rem;color:var(--muted);line-height:1.8">'+notesText+'</div>' : '<div style="font-size:.88rem;color:var(--muted)">Keine Notizen</div>');
   var isFav = m.isFav || favorites.some(function(f){ return f.title===m.title; });
   updateFavBtn(isFav);
   // Instagram link button
@@ -1729,6 +1898,7 @@ function toggleDetailEdit(){
     document.getElementById('edit-ingredients').value = m.ingredients || '';
     document.getElementById('edit-steps').value = m.steps || '';
     document.getElementById('edit-notes').value = m.notes || '';
+    document.getElementById('edit-portions').value = m.portions || 1;
     readMode.style.display = 'none';
     editMode.style.display = 'block';
     saveBtn.style.display = 'flex';
@@ -1755,6 +1925,7 @@ function saveDetailEdit(){
   m.ingredients = document.getElementById('edit-ingredients').value;
   m.steps = document.getElementById('edit-steps').value;
   m.notes = document.getElementById('edit-notes').value;
+  m.portions = parseInt(document.getElementById('edit-portions').value)||1;
   // Update read mode display
   document.getElementById('detail-modal-title').textContent = m.title;
   document.getElementById('detail-ingredients').textContent = m.ingredients || 'Keine Zutaten angegeben';
@@ -1805,23 +1976,9 @@ function deleteMeal(){
 
 // ── FAVORITES PAGE ──
 function renderFavs(){
-  var grid = document.getElementById('favs-grid');
-  if(favorites.length===0){
-    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🤍</div><p>Du hast noch keine Favoriten gespeichert.<br>Klicke beim Anzeigen eines Gerichts auf "Favorit" um es hier zu speichern.</p></div>';
-    return;
-  }
-  grid.innerHTML = favorites.map(function(f,i){
-    return '<div class="fav-card">'+
-      '<div class="fav-img">'+(f.imgData?'<img src="'+f.imgData+'">':f.emoji)+'</div>'+
-      '<div class="fav-info">'+
-        '<div class="fav-name">'+f.title+'</div>'+
-        '<div class="fav-meta">'+(f.fromIG?'Via Instagram':'Manuell')+'</div>'+
-        '<div class="fav-actions">'+
-          '<button class="fav-action-btn" onclick="addFavToDay('+i+')">+ Einplanen</button>'+
-          '<button class="fav-action-btn" onclick="removeFav('+i+')" style="color:var(--red)">Entfernen</button>'+
-        '</div>'+
-      '</div></div>';
-  }).join('');
+  var searchEl = document.getElementById('favs-search');
+  if(searchEl) searchEl.value = '';
+  renderFavsFiltered(favorites);
 }
 
 function addFavToDay(idx){
@@ -1902,16 +2059,16 @@ function rebuildCombinedList(allMeals){
   allMeals.forEach(function(entry){
     if(!shopActiveMeals[entry.id]) return;
     var lines = entry.meal.ingredients.split('\n').filter(function(l){ return l.trim(); });
+    var portions = entry.meal.portions || 1;
+    var tag = entry.meal.emoji+(portions>1?' ×'+portions:'')+' '+entry.dayLabel;
     lines.forEach(function(line){
       var name = line.trim();
       if(!name) return;
       var key = name.toLowerCase().replace(/[^a-zäöüß0-9]/g,'');
       if(merged[key]){
-        // add tag if not already there
-        var tag = entry.meal.emoji+' '+entry.dayLabel;
         if(merged[key].tags.indexOf(tag)<0) merged[key].tags.push(tag);
       } else {
-        merged[key] = {name:name, tags:[entry.meal.emoji+' '+entry.dayLabel], checked:false, key:key};
+        merged[key] = {name:name, tags:[tag], checked:false, key:key};
       }
     });
   });
@@ -2157,6 +2314,157 @@ function openLegal(page){
   document.getElementById('legal-title').textContent = content.title;
   document.getElementById('legal-body').innerHTML = content.html;
   openOverlay('legal-overlay');
+}
+
+// ── PORTIONS ──
+function changePortions(prefix, delta){
+  var el = document.getElementById(prefix+'-portions');
+  if(!el) return;
+  var val = parseInt(el.value)||1;
+  el.value = Math.max(1, Math.min(20, val+delta));
+}
+
+// ── FORGOT PASSWORD ──
+function openForgotPw(){
+  closeOverlay('auth-overlay');
+  openOverlay('forgotpw-overlay');
+}
+function sendPasswordReset(){
+  var email = document.getElementById('forgotpw-email').value.trim();
+  if(!email){ showToast('Bitte E-Mail eingeben'); return; }
+  closeOverlay('forgotpw-overlay');
+  showToast('Reset-Link wurde gesendet ✓');
+}
+
+// ── AVATAR UPLOAD ──
+function uploadAvatar(input){
+  if(!input.files||!input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var av = document.getElementById('acc-avatar-big');
+    av.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    var navAv = document.getElementById('user-avatar');
+    if(navAv) navAv.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    showToast('Profilbild aktualisiert');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ── MOVE MEAL ──
+function openMoveMeal(){
+  if(currentDetailKey===null||currentDetailIdx===null) return;
+  var today = new Date(); today.setHours(0,0,0,0);
+  var sel = document.getElementById('move-date');
+  sel.innerHTML = '';
+  for(var i=0;i<7;i++){
+    var d=new Date(today); d.setDate(today.getDate()+i);
+    var key=d.toDateString();
+    if(key===currentDetailKey) continue; // skip current day
+    var opt=document.createElement('option');
+    opt.value=key;
+    opt.textContent=(i===0?'Heute — ':'')+DAY_NAMES[d.getDay()]+' '+d.getDate()+'.'+(d.getMonth()+1)+'.';
+    sel.appendChild(opt);
+  }
+  closeOverlay('detail-overlay');
+  openOverlay('move-overlay');
+}
+function confirmMoveMeal(){
+  var newDay = document.getElementById('move-date').value;
+  if(!newDay||currentDetailKey===null||currentDetailIdx===null) return;
+  var m = meals[currentDetailKey].splice(currentDetailIdx,1)[0];
+  if(meals[currentDetailKey].length===0) delete meals[currentDetailKey];
+  if(!meals[newDay]) meals[newDay]=[];
+  var maxMeals = isPro?3:1;
+  if(meals[newDay].length>=maxMeals){ showToast('Tag ist bereits voll'); meals[currentDetailKey]=meals[currentDetailKey]||[]; meals[currentDetailKey].splice(currentDetailIdx,0,m); }
+  else { meals[newDay].push(m); }
+  closeOverlay('move-overlay');
+  buildWeekGrid();
+  showToast('Gericht verschoben ✓');
+}
+
+// ── FAVS SEARCH ──
+function filterFavs(){
+  var q = (document.getElementById('favs-search').value||'').toLowerCase().trim();
+  var filtered = q ? favorites.filter(function(f){ return f.title.toLowerCase().includes(q); }) : favorites;
+  renderFavsFiltered(filtered);
+}
+function renderFavsFiltered(list){
+  var grid = document.getElementById('favs-grid');
+  if(list.length===0){
+    grid.innerHTML='<div class="empty-state"><div class="empty-icon">'+(favorites.length===0?'🤍':'🔍')+'</div><p>'+(favorites.length===0?'Du hast noch keine Favoriten gespeichert.':'Keine Favoriten gefunden.')+'</p></div>';
+    return;
+  }
+  grid.innerHTML = list.map(function(f,i){
+    var realIdx = favorites.indexOf(f);
+    return '<div class="fav-card">'+
+      '<div class="fav-img">'+(f.imgData?'<img src="'+f.imgData+'">':f.emoji)+'</div>'+
+      '<div class="fav-info">'+
+        '<div class="fav-name">'+f.title+'</div>'+
+        '<div class="fav-meta">'+(f.fromIG?'Via Instagram':'Manuell')+(f.portions&&f.portions>1?' · '+f.portions+' Portionen':'')+'</div>'+
+        '<div class="fav-actions">'+
+          '<button class="fav-action-btn" onclick="addFavToDay('+realIdx+')">+ Einplanen</button>'+
+          '<button class="fav-action-btn" onclick="removeFav('+realIdx+')" style="color:var(--red)">Entfernen</button>'+
+        '</div>'+
+      '</div></div>';
+  }).join('');
+}
+
+// ── SHARE SHOPPING LIST ──
+function getShopListAsText(){
+  var items = document.querySelectorAll('#shop-list .shop-combined-item:not(.checked) .shop-ci-name');
+  if(!items.length) return 'Keine Zutaten in der Einkaufsliste.';
+  var lines = ['🛒 Plateio Einkaufsliste\n'];
+  items.forEach(function(el){ lines.push('□ '+el.textContent); });
+  return lines.join('\n');
+}
+function shareListWhatsApp(){
+  var text = getShopListAsText();
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+  closeOverlay('share-overlay');
+}
+function copyListToClipboard(){
+  var text = getShopListAsText();
+  if(navigator.clipboard){ navigator.clipboard.writeText(text).then(function(){ showToast('Liste kopiert ✓'); closeOverlay('share-overlay'); }); }
+  else { showToast('Kopieren nicht unterstützt'); }
+}
+function exportListPDF(){
+  var text = getShopListAsText();
+  var win = window.open('','_blank');
+  win.document.write('<pre style="font-family:sans-serif;padding:2rem;font-size:14px">'+text+'</pre>');
+  win.document.close();
+  win.print();
+  closeOverlay('share-overlay');
+}
+
+// ── RECURRING MEALS ──
+function applyRecurring(meal, startDayKey, repeat){
+  if(!repeat||repeat==='none') return;
+  var startDate = new Date(startDayKey);
+  var intervals = {weekly:7, biweekly:14, monthly:30};
+  var days = intervals[repeat]||7;
+  for(var i=1; i<=4; i++){
+    var d = new Date(startDate);
+    d.setDate(startDate.getDate() + days*i);
+    var key = d.toDateString();
+    var max = isPro?3:1;
+    if(!meals[key]) meals[key]=[];
+    if(meals[key].length<max) meals[key].push(Object.assign({},meal,{recurring:repeat}));
+  }
+}
+
+// ── PORTIONS DETECTION IN ANALYSIS ──
+function detectPortions(text){
+  var patterns = [
+    /für\s+(\d+)\s*person/i, /für\s+(\d+)\s*leute/i,
+    /(\d+)\s*portion/i, /(\d+)\s*serving/i,
+    /serves?\s+(\d+)/i, /ergibt\s+(\d+)/i,
+    /reicht\s+für\s+(\d+)/i
+  ];
+  for(var i=0;i<patterns.length;i++){
+    var m = text.match(patterns[i]);
+    if(m) return parseInt(m[1]);
+  }
+  return 1; // default 1 portion
 }
 
 // ── ACCOUNT ──

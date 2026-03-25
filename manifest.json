@@ -1,11 +1,11 @@
 {
-  "name": "Plateio — Mahlzeitenplaner",
+  "name": "Plateio — Dein smarter Mahlzeitenplaner",
   "short_name": "Plateio",
-  "description": "Instagram-Rezepte direkt in deinen Wochenplan",
+  "description": "Instagram-Rezepte automatisch erkennen & in deinen Wochenplan eintragen.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#faf8f4",
+  "background_color": "#faf9f6",
   "theme_color": "#4a7c59",
   "lang": "de",
   "icons": [
@@ -22,12 +22,20 @@
       "purpose": "any maskable"
     }
   ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
   "screenshots": [
     {
-      "src": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800",
-      "sizes": "800x600",
+      "src": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200",
+      "sizes": "1200x630",
       "type": "image/jpeg"
     }
-  ],
-  "categories": ["food", "lifestyle", "productivity"]
+  ]
 }

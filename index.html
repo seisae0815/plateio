@@ -2780,6 +2780,44 @@ if('serviceWorker' in navigator){
   });
 }
 
+// ── Share Target Handler ──────────────────────────────────────
+// Fängt Links ab die via "Teilen" aus Instagram/Pinterest/Facebook kommen
+window.addEventListener('load', function(){
+  var params = new URLSearchParams(window.location.search);
+  var sharedUrl  = params.get('url')  || '';
+  var sharedText = params.get('text') || '';
+  var sharedTitle = params.get('title') || '';
+
+  // Extrahiere URL aus Text falls kein direkter url-Parameter
+  var linkMatch = (sharedUrl || sharedText).match(/https?:\/\/[^\s]+/);
+  var incomingLink = sharedUrl || (linkMatch ? linkMatch[0] : '');
+
+  if(incomingLink){
+    // App-View öffnen (falls Landing Page angezeigt wird)
+    showApp();
+    // Kurze Verzögerung damit die App geladen ist
+    setTimeout(function(){
+      var input = document.getElementById('link-input');
+      if(input){
+        input.value = incomingLink;
+        // URL aus Query-String entfernen (sauberere History)
+        window.history.replaceState({}, document.title, '/');
+        // Optional: Analyse direkt starten
+        // analyzeLink();
+        showToast('Link aus ' + detectPlatform(incomingLink) + ' empfangen ✓');
+      }
+    }, 500);
+  }
+});
+
+function detectPlatform(url){
+  if(url.includes('instagram.com')) return 'Instagram';
+  if(url.includes('pinterest.')) return 'Pinterest';
+  if(url.includes('facebook.com') || url.includes('fb.com')) return 'Facebook';
+  return 'deiner App';
+}
+// ─────────────────────────────────────────────────────────────
+
 // Catch the install prompt (Android/Chrome)
 window.addEventListener('beforeinstallprompt', function(e){
   e.preventDefault();

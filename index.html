@@ -70,25 +70,58 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 #page-app{display:none}
 
 /* Navbar */
-.nav{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 3rem}
-.nav-logo{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:#fff;letter-spacing:-0.3px}
-.nav-logo span{color:var(--accent)}
-.nav-actions{display:flex;gap:10px}
-.btn-ghost{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:0.45rem 1.3rem;border-radius:40px;font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;transition:all .2s}
-.btn-ghost:hover{background:rgba(255,255,255,0.28)}
-.btn-accent{background:var(--accent);border:1px solid var(--accent);color:var(--dark);padding:0.45rem 1.3rem;border-radius:40px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all .2s}
-.btn-accent:hover{background:#b8985e}
-/* Mobile landing nav — buttons at bottom of hero */
-.hero-auth-mobile{display:none;position:absolute;bottom:3.5rem;left:0;right:0;z-index:10;padding:0 1.5rem;gap:10px}
+/* ── Header / Nav ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 3rem;height:62px;
+  background:rgba(250,248,244,0.88);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:0.5px solid rgba(0,0,0,0.07);
+  transition:box-shadow .25s;
+}
+.nav.scrolled{box-shadow:0 2px 20px rgba(26,26,22,0.07)}
+.nav-logo{
+  display:flex;align-items:center;gap:9px;
+  font-family:'Fraunces',serif;font-size:1.35rem;font-weight:500;
+  color:var(--dark);letter-spacing:-0.3px;text-decoration:none;
+}
+.nav-logo-icon{
+  width:30px;height:30px;border-radius:8px;background:var(--sage);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-link-lp{
+  font-size:.875rem;color:var(--muted);padding:.45rem 1rem;
+  border-radius:8px;text-decoration:none;background:none;border:none;
+  font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;
+}
+.nav-link-lp:hover{background:var(--sage-l);color:var(--sage)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+.btn-ghost{
+  background:transparent;border:1.5px solid var(--border);color:var(--text);
+  padding:.42rem 1.2rem;border-radius:40px;font-family:'DM Sans',sans-serif;
+  font-size:.875rem;font-weight:400;cursor:pointer;transition:all .2s;
+}
+.btn-ghost:hover{border-color:var(--sage);color:var(--sage)}
+.btn-accent{
+  background:var(--sage);border:none;color:#fff;
+  padding:.48rem 1.3rem;border-radius:40px;font-family:'DM Sans',sans-serif;
+  font-size:.875rem;font-weight:500;cursor:pointer;transition:all .2s;
+}
+.btn-accent:hover{background:var(--sage-d);transform:translateY(-1px)}
+/* Mobile landing nav */
+.hero-auth-mobile{display:none;position:absolute;bottom:3rem;left:0;right:0;z-index:10;padding:0 1.5rem;gap:10px}
 @media(max-width:600px){
-  .nav{padding:1rem 1.2rem}
+  .nav{padding:0 1.2rem;height:56px}
+  .nav-links{display:none}
   .nav-actions{display:none}
   .hero-auth-mobile{display:flex}
   .hero-auth-mobile .btn-ghost,.hero-auth-mobile .btn-accent{flex:1;text-align:center;padding:.75rem;font-size:.9rem}
 }
 
-/* Hero Slider */
-.hero{position:relative;height:520px;overflow:hidden}
+/* Hero Slider — etwas weniger hoch, Hero beginnt unter dem fixierten Nav */
+.hero{position:relative;height:78vh;min-height:460px;max-height:680px;overflow:hidden;margin-top:62px}
 .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.3s ease}
 .slide.active{opacity:1}
 .slide-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -472,8 +505,18 @@ footer p{font-size:.78rem;color:var(--muted)}
 <div id="page-landing">
 
   <div class="hero">
-    <nav class="nav">
-      <div class="nav-logo">plate<span>io</span></div>
+    <nav class="nav" id="main-nav">
+      <a class="nav-logo" href="#">
+        <div class="nav-logo-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2C8 2 5 5 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5" fill="#fff" stroke="none"/></svg>
+        </div>
+        Plateio
+      </a>
+      <div class="nav-links">
+        <a class="nav-link-lp" href="#features">Funktionen</a>
+        <a class="nav-link-lp" href="#pricing">Preise</a>
+        <a class="nav-link-lp" href="#faq">FAQ</a>
+      </div>
       <div class="nav-actions">
         <button class="btn-ghost" onclick="openAuth('login')">Anmelden</button>
         <button class="btn-accent" onclick="openAuth('register')">Kostenlos starten</button>
@@ -535,7 +578,7 @@ footer p{font-size:.78rem;color:var(--muted)}
   </div>
 
   <!-- Features -->
-  <div class="features">
+  <div class="features" id="features">
     <div class="f-left">
       <div class="app-preview">
         <div class="ap-header"><div class="ap-dot"></div><div class="ap-title">plateio — Wochenplan</div></div>
@@ -573,7 +616,7 @@ footer p{font-size:.78rem;color:var(--muted)}
   </div>
 
   <!-- Pricing -->
-  <div class="pricing-section">
+  <div class="pricing-section" id="pricing">
     <h2 class="pricing-title">Starte kostenlos — oder hol dir alle Premium-Features<br><em>für weniger als 2 Kaffee pro Monat</em></h2>
     <p class="pricing-sub">Kein Risiko. Kein Abo nötig um loszulegen.</p>
     <div class="plans">
@@ -620,7 +663,7 @@ footer p{font-size:.78rem;color:var(--muted)}
   </div>
 
   <!-- FAQ -->
-  <div class="faq-section">
+  <div class="faq-section" id="faq">
     <h2 class="pricing-title">Häufige Fragen</h2>
     <p class="pricing-sub">Alles was du wissen möchtest — auf einen Blick</p>
     <div class="faq-wrap">
@@ -2819,6 +2862,12 @@ function detectPlatform(url){
 // ─────────────────────────────────────────────────────────────
 
 // Catch the install prompt (Android/Chrome)
+// Nav scroll shadow
+window.addEventListener('scroll', function(){
+  var nav = document.getElementById('main-nav');
+  if(nav) nav.classList.toggle('scrolled', window.scrollY > 10);
+});
+
 window.addEventListener('beforeinstallprompt', function(e){
   e.preventDefault();
   deferredPrompt = e;

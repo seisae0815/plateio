@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200">
 
 <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -1651,8 +1651,47 @@ footer p{font-size:.78rem;color:var(--muted)}
 // ══════════════════════════════════════════════════════════
 var SUPA_URL = 'https://zhezghhcstbjyhclijsn.supabase.co';
 var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoZXpnaGhjc3RianloY2xpanNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NTcwNDgsImV4cCI6MjA5MDEzMzA0OH0.Za1NMugBADP0vMCFFiNx0EuwGUlS4Znj_tmfD3Wyglg';
-var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+var sb = null;
 var currentUser = null;
+
+// Supabase wird nach dem Laden der Seite initialisiert
+window.addEventListener('DOMContentLoaded', function() {
+  if(typeof supabase === 'undefined') {
+    console.error('Supabase CDN nicht geladen!');
+    document.body.insertAdjacentHTML('afterbegin',
+      '<div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#e05252;color:#fff;padding:.8rem 1.2rem;text-align:center;font-size:.88rem">'+
+      '⚠️ Verbindungsfehler — bitte Seite neu laden</div>');
+    return;
+  }
+  sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  // Auth-State überwachen
+  sb.auth.onAuthStateChange(async function(event, session){
+    if(session && session.user){
+      currentUser = session.user;
+      await loadProfile();
+      await loadMeals();
+      await loadFavorites();
+      document.getElementById('page-landing').style.display = 'none';
+      document.getElementById('page-app').style.display = 'block';
+      buildWeekGrid();
+      renderFavs();
+      renderShopPage();
+      updateAnalysisHint();
+      if(event === 'SIGNED_IN'){
+        closeOverlay('auth-overlay');
+        checkIOSInstall();
+      }
+    } else {
+      currentUser = null;
+      isPro = false;
+      meals = {};
+      favorites = [];
+      document.getElementById('page-landing').style.display = 'block';
+      document.getElementById('page-app').style.display = 'none';
+    }
+  });
+});
 
 // ── STATE ──
 var isPro = false;
@@ -1839,35 +1878,6 @@ async function dbIncrementAnalyses(){
 //  AUTH (Supabase)
 // ══════════════════════════════════════════════════════════
 
-// Supabase Auth-State überwachen — startet beim Laden
-sb.auth.onAuthStateChange(async function(event, session){
-  if(session && session.user){
-    currentUser = session.user;
-    // Daten laden
-    await loadProfile();
-    await loadMeals();
-    await loadFavorites();
-    // App zeigen
-    document.getElementById('page-landing').style.display = 'none';
-    document.getElementById('page-app').style.display = 'block';
-    buildWeekGrid();
-    renderFavs();
-    renderShopPage();
-    updateAnalysisHint();
-    if(event === 'SIGNED_IN'){
-      closeOverlay('auth-overlay');
-      checkIOSInstall();
-    }
-  } else {
-    currentUser = null;
-    isPro = false;
-    meals = {};
-    favorites = {};
-    document.getElementById('page-landing').style.display = 'block';
-    document.getElementById('page-app').style.display = 'none';
-  }
-});
-
 var authMode = 'login';
 function openAuth(mode){ authMode = mode; setAuthUI(); openOverlay('auth-overlay'); }
 function setAuthUI(){
@@ -1893,6 +1903,7 @@ function setAuthUI(){
 function toggleAuthMode(){ authMode = authMode==='login'?'register':'login'; setAuthUI(); }
 
 async function doAuth(){
+  if(!sb){ showToast('Verbindung wird aufgebaut, bitte kurz warten...'); return; }
   var email = document.getElementById('auth-email').value.trim().toLowerCase();
   var pw = document.getElementById('auth-pw').value;
   var btn = document.getElementById('auth-submit-btn');

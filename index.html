@@ -1663,10 +1663,22 @@ window.addEventListener('DOMContentLoaded', function() {
       '⚠️ Verbindungsfehler — bitte Seite neu laden</div>');
     return;
   }
-  sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+  sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
+    }
+  });
 
   // Auth-State überwachen
   sb.auth.onAuthStateChange(async function(event, session){
+    if(event === 'TOKEN_REFRESHED' && !session){
+      // Token konnte nicht erneuert werden — Session löschen und neu einloggen
+      localStorage.clear();
+      location.reload();
+      return;
+    }
     if(session && session.user){
       currentUser = session.user;
       await loadProfile();
@@ -1933,7 +1945,16 @@ async function doAuth(){
     var res = await sb.auth.signInWithPassword({ email: email, password: pw });
     btn.disabled = false;
     btn.textContent = 'Anmelden';
-    if(res.error){ showToast('Fehler: ' + (res.error.message === 'Invalid login credentials' ? 'E-Mail oder Passwort falsch' : res.error.message)); return; }
+    if(res.error){
+      // Korrupte Session cleanen und nochmal versuchen
+      if(res.error.message.includes('session') || res.error.message.includes('token')){
+        localStorage.clear();
+        showToast('Sitzung zurückgesetzt — bitte nochmal versuchen');
+        return;
+      }
+      showToast('Fehler: ' + (res.error.message === 'Invalid login credentials' ? 'E-Mail oder Passwort falsch' : res.error.message));
+      return;
+    }
   }
 }
 

@@ -1665,9 +1665,9 @@ window.addEventListener('DOMContentLoaded', function() {
   }
   sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
     auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false
     }
   });
 
@@ -1942,6 +1942,10 @@ async function doAuth(){
   } else {
     btn.textContent = 'Anmeldung läuft…';
     btn.disabled = true;
+    // Alte Session-Daten cleanen bevor neuer Login
+    Object.keys(localStorage).forEach(function(k){
+      if(k.startsWith('sb-')) localStorage.removeItem(k);
+    });
     var res = await sb.auth.signInWithPassword({ email: email, password: pw });
     btn.disabled = false;
     btn.textContent = 'Anmelden';

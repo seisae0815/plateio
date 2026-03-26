@@ -24,6 +24,9 @@
 <meta property="og:description" content="Instagram-Rezepte automatisch erkennen & in den Wochenplan eintragen.">
 <meta property="og:image" content="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200">
 
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -99,7 +102,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .nav-link-lp:hover{background:var(--sage-l);color:var(--sage)}
 .nav-actions{display:flex;gap:8px;align-items:center}
 .btn-ghost{
-  background:transparent;border:1.5px solid var(--border);color:var(--text);
+  background:#fff;border:1.5px solid #bdb8af;color:var(--text);
   padding:.42rem 1.2rem;border-radius:40px;font-family:'DM Sans',sans-serif;
   font-size:.875rem;font-weight:400;cursor:pointer;transition:all .2s;
 }
@@ -895,6 +898,11 @@ footer p{font-size:.78rem;color:var(--muted)}
           <span>Account löschen</span>
           <span class="acc-arrow">›</span>
         </div>
+        <div class="acc-item" onclick="doLogout()" style="margin-top:4px;border-top:1px solid var(--border);padding-top:8px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Abmelden</span>
+          <span class="acc-arrow">›</span>
+        </div>
       </div>
 
       <!-- Sub-sections (hidden by default) -->
@@ -1069,7 +1077,21 @@ footer p{font-size:.78rem;color:var(--muted)}
       </div>
       <div class="field">
         <label>Passwort</label>
-        <input type="password" id="auth-pw" placeholder="••••••••" value="demo1234">
+        <div style="position:relative">
+          <input type="password" id="auth-pw" placeholder="••••••••" value="demo1234" style="width:100%;padding-right:2.8rem">
+          <button type="button" onclick="togglePwVisible('auth-pw','eye-pw')" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:.2rem;line-height:1;display:flex;align-items:center" tabindex="-1" title="Passwort anzeigen">
+            <svg id="eye-pw" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="field" id="auth-confirm-field" style="display:none">
+        <label>Passwort bestätigen</label>
+        <div style="position:relative">
+          <input type="password" id="auth-pw-confirm" placeholder="••••••••" style="width:100%;padding-right:2.8rem">
+          <button type="button" onclick="togglePwVisible('auth-pw-confirm','eye-pw-confirm')" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:.2rem;line-height:1;display:flex;align-items:center" tabindex="-1" title="Passwort anzeigen">
+            <svg id="eye-pw-confirm" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
       </div>
       <button class="btn-full" id="auth-submit-btn" onclick="doAuth()">Anmelden</button>
       <div style="text-align:center;margin-top:.6rem">
@@ -1104,7 +1126,7 @@ footer p{font-size:.78rem;color:var(--muted)}
     </div>
     <div class="app-nav-right">
       <div class="plan-pill" id="plan-badge">Free Plan</div>
-      <div class="avatar" id="user-avatar" onclick="openOverlay('account-overlay')" style="cursor:pointer">H</div>
+      <div class="avatar" id="user-avatar" onclick="updateAccountBadge();openOverlay('account-overlay')" style="cursor:pointer">H</div>
     </div>
   </nav>
 
@@ -1243,7 +1265,7 @@ footer p{font-size:.78rem;color:var(--muted)}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <span class="mbn-label">Einkaufen</span>
       </button>
-      <button class="mbn-btn" id="mbn-account" onclick="openOverlay('account-overlay')">
+      <button class="mbn-btn" id="mbn-account" onclick="updateAccountBadge();openOverlay('account-overlay')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span class="mbn-label">Account</span>
       </button>
@@ -1524,25 +1546,6 @@ footer p{font-size:.78rem;color:var(--muted)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     FORGOT PASSWORD MODAL
-══════════════════════════════════════ -->
-<div class="overlay" id="forgotpw-overlay">
-  <div class="modal" style="max-width:400px">
-    <div class="modal-head">
-      <div class="modal-title">Passwort zurücksetzen</div>
-      <button class="modal-close" onclick="closeOverlay('forgotpw-overlay')">×</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:.84rem;color:var(--muted);margin-bottom:1rem">Gib deine E-Mail-Adresse ein. Du erhältst einen Link zum Zurücksetzen deines Passworts.</p>
-      <div class="field">
-        <label>E-Mail</label>
-        <input type="email" id="forgotpw-email" placeholder="deine@email.at">
-      </div>
-      <button class="btn-full" onclick="sendPasswordReset()">Reset-Link senden</button>
-    </div>
-  </div>
-</div>
 
 <!-- ══════════════════════════════════════
      SHARE SHOPPING LIST MODAL
@@ -1643,11 +1646,19 @@ footer p{font-size:.78rem;color:var(--muted)}
 </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ══════════════════════════════════════════════════════════
+//  SUPABASE SETUP
+// ══════════════════════════════════════════════════════════
+var SUPA_URL = 'https://zhezghhcstbjyhclijsn.supabase.co';
+var SUPA_KEY = 'sb_publishable_oVPWnjPgV3mxblkGP0y2wA_2I2X8xKs';
+var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+var currentUser = null;
+
 // ── STATE ──
 var isPro = false;
 var analysesUsed = 0;
 var maxAnalysesFree = 5;
-var meals = {}; // { "dateKey": [{title,emoji,ingredients,steps,notes,fromIG,isFav,imgData}] }
+var meals = {};
 var favorites = [];
 var weekOffset = 0;
 var currentAddDay = null;
@@ -1655,32 +1666,13 @@ var currentDetailKey = null;
 var currentDetailIdx = null;
 var fromFavsSelectedIdx = null;
 
-// ── DEMO DATA ──
+// ── DEMO DATA (nur für Landing Page Preview) ──
 var demoRecipes = [
   {title:"Avocado-Toast mit pochiertem Ei",emoji:"🥑",ingredients:"2 Scheiben Sauerteigbrot\n1 reife Avocado\n2 Eier\n1 Zitrone\nChiliflocken\nSalz & Pfeffer\nKresse",steps:"1. Brot im Toaster rösten\n2. Avocado zerdrücken, mit Zitronensaft und Salz würzen\n3. Eier pochieren: Wasser mit Essig zum Köcheln bringen, Eier vorsichtig einschlagen (4 Min)\n4. Avocado auf Toast verteilen, Ei draufsetzen, mit Chiliflocken und Kresse garnieren",notes:"Für extra Protein: geräucherten Lachs dazulegen",fromIG:true},
   {title:"Miso-Ramen",emoji:"🍜",ingredients:"2 Pakete Ramen-Nudeln\n3 EL weißes Miso\n600ml Dashi-Brühe\n2 Eier\nNori-Blätter\nGrüne Zwiebeln\nSesam",steps:"1. Eier 7 Minuten kochen, in Eiswasser abschrecken, schälen\n2. Dashi erhitzen, Miso einrühren – nicht kochen lassen!\n3. Nudeln nach Packungsanleitung kochen\n4. Brühe in Schüsseln, Nudeln rein, Ei halbiert dazu, mit Nori und Sesam toppen",notes:"Brühe lässt sich super einen Tag vorher zubereiten",fromIG:true},
   {title:"One-Pan Shakshuka",emoji:"🍳",ingredients:"400g gehackte Tomaten (Dose)\n1 rote Paprika\n1 Zwiebel\n3 Knoblauchzehen\n4 Eier\n1 TL Kreuzkümmel\n1 TL Paprika edelsüß\nFeta-Käse\nFrisches Brot",steps:"1. Zwiebel und Knoblauch in Olivenöl anschwitzen\n2. Paprika dazu, 3 Min mitbraten\n3. Tomaten und Gewürze rein, 10 Min köcheln\n4. Mulden formen, Eier hineinschlagen, Deckel drauf, 5-7 Min stocken lassen\n5. Mit Feta und frischem Brot servieren",notes:"Mit frischem Koriander und Harissa noch besser!",fromIG:true},
   {title:"Kürbiscremesuppe",emoji:"🎃",ingredients:"1 Hokkaido-Kürbis (~800g)\n1 Zwiebel\n2 Knoblauchzehen\n500ml Gemüsebrühe\n150ml Kokosmilch\n1 Stück Ingwer (2cm)\n1 TL Kurkuma",steps:"1. Kürbis waschen, Kerne entfernen, würfeln (Schale bleibt dran)\n2. Zwiebel und Knoblauch anschwitzen\n3. Kürbis und Ingwer dazu, kurz mitbraten\n4. Mit Brühe aufgießen, 20 Min köcheln\n5. Pürieren, Kokosmilch einrühren, abschmecken",notes:"Mit gerösteten Kürbiskernen und einem Klecks Sauerrahm servieren",fromIG:true},
 ];
-
-var demoFavs = [
-  {title:"Pasta Carbonara",emoji:"🍝",ingredients:"400g Spaghetti\n150g Guanciale oder Pancetta\n4 Eigelb\n50g Pecorino\n50g Parmesan\nSchwarzer Pfeffer",steps:"1. Pasta kochen (al dente)\n2. Guanciale knusprig anbraten\n3. Eigelb mit Käse verrühren\n4. Heiße Pasta zur Masse, Pasta-Wasser einarbeiten",notes:"Kein Sahne! Echte Carbonara braucht nur Ei und Käse",fromIG:false,isFav:true},
-  {title:"Caesar Salad",emoji:"🥗",ingredients:"1 Romana-Salat\n Croûtons\n Parmesan\nFür das Dressing: 2 EL Mayo, 1 TL Senf, 1 Knoblauchzehe, Zitronensaft, Worcestershire",steps:"1. Dressing mischen\n2. Salat zerreißen\n3. Alles vermengen, Croûtons und Parmesan drüber",notes:"Mit gegrilltem Hähnchen wird daraus eine vollständige Mahlzeit",fromIG:false,isFav:true},
-];
-
-// seed demo data
-(function(){
-  var today = new Date();
-  var d0 = new Date(today); d0.setDate(today.getDate()-1);
-  var d1 = new Date(today);
-  var d3 = new Date(today); d3.setDate(today.getDate()+2);
-  var d5 = new Date(today); d5.setDate(today.getDate()+4);
-  meals[d0.toDateString()] = [Object.assign({},demoRecipes[3])];
-  meals[d1.toDateString()] = [Object.assign({},demoRecipes[0])];
-  meals[d3.toDateString()] = [Object.assign({},demoRecipes[1])];
-  meals[d5.toDateString()] = [Object.assign({},demoRecipes[2])];
-  favorites = demoFavs.slice();
-})();
 
 // ── SLIDER ──
 var curSlide = 0;
@@ -1693,7 +1685,189 @@ function goSlide(n){
   document.querySelectorAll('.sdot')[curSlide].classList.add('active');
 }
 
-// ── AUTH ──
+// ── PASSWORD VISIBILITY TOGGLE ──
+function togglePwVisible(inputId, iconId){
+  var inp = document.getElementById(inputId);
+  var icon = document.getElementById(iconId);
+  var showing = inp.type === 'text';
+  inp.type = showing ? 'password' : 'text';
+  icon.innerHTML = showing
+    ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+    : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+}
+
+// ══════════════════════════════════════════════════════════
+//  SUPABASE DATA LAYER
+// ══════════════════════════════════════════════════════════
+
+// Lädt Meals aus Supabase und baut das lokale meals-Objekt auf
+async function loadMeals(){
+  if(!currentUser) return;
+  var res = await sb.from('meals').select('*').eq('user_id', currentUser.id).order('sort_order');
+  if(res.error){ console.error('loadMeals:', res.error); return; }
+  meals = {};
+  (res.data || []).forEach(function(row){
+    var key = row.day_key;
+    if(!meals[key]) meals[key] = [];
+    meals[key].push({
+      _id: row.id,
+      title: row.title,
+      emoji: row.emoji || '🍽️',
+      ingredients: row.ingredients || '',
+      steps: row.steps || '',
+      notes: row.notes || '',
+      fromIG: row.from_ig,
+      imgData: row.img_data,
+      isFav: row.is_fav,
+      recurring: row.recurring,
+      platform: row.from_ig ? 'instagram' : 'manual'
+    });
+  });
+}
+
+// Lädt Favoriten aus Supabase
+async function loadFavorites(){
+  if(!currentUser) return;
+  var res = await sb.from('favorites').select('*').eq('user_id', currentUser.id).order('created_at');
+  if(res.error){ console.error('loadFavorites:', res.error); return; }
+  favorites = (res.data || []).map(function(row){
+    return {
+      _id: row.id,
+      title: row.title,
+      emoji: row.emoji || '🍽️',
+      ingredients: row.ingredients || '',
+      steps: row.steps || '',
+      notes: row.notes || '',
+      fromIG: row.from_ig,
+      imgData: row.img_data,
+      isFav: true
+    };
+  });
+}
+
+// Lädt Profil (Pro-Status, analysesUsed)
+async function loadProfile(){
+  if(!currentUser) return;
+  var res = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  if(res.error){ console.error('loadProfile:', res.error); return; }
+  var profile = res.data;
+  analysesUsed = profile.analyses_used || 0;
+  if(profile.is_pro) activatePro('owner');
+  // Avatar initials
+  var name = profile.name || currentUser.email || '?';
+  var initials = name.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2);
+  var avatar = document.getElementById('user-avatar');
+  if(avatar) avatar.textContent = initials;
+}
+
+// Meal in Supabase speichern → gibt ID zurück
+async function dbSaveMeal(dayKey, meal){
+  if(!currentUser) return null;
+  var sortOrder = (meals[dayKey] || []).length;
+  var res = await sb.from('meals').insert({
+    user_id: currentUser.id,
+    day_key: dayKey,
+    title: meal.title,
+    emoji: meal.emoji || '🍽️',
+    ingredients: meal.ingredients || '',
+    steps: meal.steps || '',
+    notes: meal.notes || '',
+    from_ig: !!meal.fromIG,
+    img_data: meal.imgData || null,
+    is_fav: !!meal.isFav,
+    recurring: meal.recurring || 'none',
+    sort_order: sortOrder
+  }).select().single();
+  if(res.error){ console.error('dbSaveMeal:', res.error); return null; }
+  return res.data.id;
+}
+
+// Meal in Supabase aktualisieren
+async function dbUpdateMeal(mealId, updates){
+  if(!currentUser || !mealId) return;
+  var mapped = {};
+  if(updates.title !== undefined) mapped.title = updates.title;
+  if(updates.ingredients !== undefined) mapped.ingredients = updates.ingredients;
+  if(updates.steps !== undefined) mapped.steps = updates.steps;
+  if(updates.notes !== undefined) mapped.notes = updates.notes;
+  if(updates.emoji !== undefined) mapped.emoji = updates.emoji;
+  if(updates.imgData !== undefined) mapped.img_data = updates.imgData;
+  if(updates.isFav !== undefined) mapped.is_fav = updates.isFav;
+  var res = await sb.from('meals').update(mapped).eq('id', mealId).eq('user_id', currentUser.id);
+  if(res.error) console.error('dbUpdateMeal:', res.error);
+}
+
+// Meal aus Supabase löschen
+async function dbDeleteMeal(mealId){
+  if(!currentUser || !mealId) return;
+  var res = await sb.from('meals').delete().eq('id', mealId).eq('user_id', currentUser.id);
+  if(res.error) console.error('dbDeleteMeal:', res.error);
+}
+
+// Favorit in Supabase speichern
+async function dbSaveFavorite(meal){
+  if(!currentUser) return null;
+  var res = await sb.from('favorites').insert({
+    user_id: currentUser.id,
+    title: meal.title,
+    emoji: meal.emoji || '🍽️',
+    ingredients: meal.ingredients || '',
+    steps: meal.steps || '',
+    notes: meal.notes || '',
+    from_ig: !!meal.fromIG,
+    img_data: meal.imgData || null
+  }).select().single();
+  if(res.error){ console.error('dbSaveFavorite:', res.error); return null; }
+  return res.data.id;
+}
+
+// Favorit aus Supabase löschen
+async function dbDeleteFavorite(favId){
+  if(!currentUser || !favId) return;
+  var res = await sb.from('favorites').delete().eq('id', favId).eq('user_id', currentUser.id);
+  if(res.error) console.error('dbDeleteFavorite:', res.error);
+}
+
+// analysesUsed in Supabase hochzählen
+async function dbIncrementAnalyses(){
+  if(!currentUser) return;
+  analysesUsed++;
+  await sb.from('profiles').update({ analyses_used: analysesUsed }).eq('id', currentUser.id);
+}
+
+// ══════════════════════════════════════════════════════════
+//  AUTH (Supabase)
+// ══════════════════════════════════════════════════════════
+
+// Supabase Auth-State überwachen — startet beim Laden
+sb.auth.onAuthStateChange(async function(event, session){
+  if(session && session.user){
+    currentUser = session.user;
+    // Daten laden
+    await loadProfile();
+    await loadMeals();
+    await loadFavorites();
+    // App zeigen
+    document.getElementById('page-landing').style.display = 'none';
+    document.getElementById('page-app').style.display = 'block';
+    buildWeekGrid();
+    renderFavs();
+    renderShopPage();
+    updateAnalysisHint();
+    if(event === 'SIGNED_IN'){
+      closeOverlay('auth-overlay');
+      checkIOSInstall();
+    }
+  } else {
+    currentUser = null;
+    isPro = false;
+    meals = {};
+    favorites = {};
+    document.getElementById('page-landing').style.display = 'block';
+    document.getElementById('page-app').style.display = 'none';
+  }
+});
+
 var authMode = 'login';
 function openAuth(mode){ authMode = mode; setAuthUI(); openOverlay('auth-overlay'); }
 function setAuthUI(){
@@ -1701,28 +1875,78 @@ function setAuthUI(){
   document.getElementById('auth-modal-title').textContent = isL ? 'Anmelden' : 'Registrieren';
   document.getElementById('auth-submit-btn').textContent = isL ? 'Anmelden' : 'Registrieren';
   document.getElementById('auth-name-field').style.display = isL ? 'none' : 'block';
+  document.getElementById('auth-confirm-field').style.display = isL ? 'none' : 'block';
   document.getElementById('forgot-pw-link').style.display = isL ? 'block' : 'none';
   document.getElementById('auth-switch-text').innerHTML = isL
     ? 'Noch kein Konto? <a onclick="toggleAuthMode()">Registrieren</a>'
     : 'Bereits registriert? <a onclick="toggleAuthMode()">Anmelden</a>';
+  // Demo-Werte nur beim Login vorausfüllen
+  if(isL){
+    document.getElementById('auth-email').value = '';
+    document.getElementById('auth-pw').value = '';
+  } else {
+    document.getElementById('auth-email').value = '';
+    document.getElementById('auth-pw').value = '';
+    document.getElementById('auth-pw-confirm').value = '';
+  }
 }
 function toggleAuthMode(){ authMode = authMode==='login'?'register':'login'; setAuthUI(); }
-function doAuth(){
-  closeOverlay('auth-overlay');
-  document.getElementById('page-landing').style.display = 'none';
-  document.getElementById('page-app').style.display = 'block';
+
+async function doAuth(){
   var email = document.getElementById('auth-email').value.trim().toLowerCase();
-  if(window.location.hash === '#pro' || window.location.hash === '#owner' || proEmails.indexOf(email) >= 0){
-    activatePro('owner');
-  }
-  buildWeekGrid();
-  renderFavs();
-  renderShopPage();
-  updateAnalysisHint();
-  // Show onboarding for new registrations
+  var pw = document.getElementById('auth-pw').value;
+  var btn = document.getElementById('auth-submit-btn');
+  if(!email || !pw){ showToast('Bitte E-Mail und Passwort eingeben'); return; }
+
   if(authMode === 'register'){
-    setTimeout(function(){ openOverlay('onboarding-overlay'); }, 400);
+    var name = document.getElementById('auth-name').value.trim();
+    var pwConfirm = document.getElementById('auth-pw-confirm').value;
+    if(pw !== pwConfirm){ showToast('Passwörter stimmen nicht überein'); return; }
+    if(pw.length < 6){ showToast('Passwort muss mindestens 6 Zeichen haben'); return; }
+    btn.textContent = 'Registrierung läuft…';
+    btn.disabled = true;
+    var res = await sb.auth.signUp({ email: email, password: pw, options: { data: { name: name } } });
+    btn.disabled = false;
+    btn.textContent = 'Registrieren';
+    if(res.error){ showToast('Fehler: ' + res.error.message); return; }
+    // Prüfen ob E-Mail-Bestätigung nötig ist
+    if(res.data.user && !res.data.session){
+      closeOverlay('auth-overlay');
+      showEmailConfirmBanner(email);
+    } else {
+      setTimeout(function(){ openOverlay('onboarding-overlay'); }, 600);
+    }
+  } else {
+    btn.textContent = 'Anmeldung läuft…';
+    btn.disabled = true;
+    var res = await sb.auth.signInWithPassword({ email: email, password: pw });
+    btn.disabled = false;
+    btn.textContent = 'Anmelden';
+    if(res.error){ showToast('Fehler: ' + (res.error.message === 'Invalid login credentials' ? 'E-Mail oder Passwort falsch' : res.error.message)); return; }
   }
+}
+
+// E-Mail-Bestätigungshinweis nach Registrierung
+function showEmailConfirmBanner(email){
+  var banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999;background:var(--sage);color:#fff;padding:1rem 1.5rem;text-align:center;font-size:.9rem;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,.2)';
+  banner.innerHTML = '📧 <strong>Fast geschafft!</strong> Wir haben eine Bestätigungs-E-Mail an <strong>'+email+'</strong> gesendet. Bitte klicke den Link in der E-Mail um dein Konto zu aktivieren.';
+  document.body.appendChild(banner);
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  closeOverlay('account-overlay');
+  showToast('Abgemeldet');
+}
+
+async function openForgotPw(){
+  var email = document.getElementById('auth-email').value.trim();
+  if(!email){ showToast('Bitte zuerst deine E-Mail eingeben'); return; }
+  var res = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+  if(res.error){ showToast('Fehler: ' + res.error.message); return; }
+  showToast('Passwort-Reset E-Mail wurde gesendet ✓');
+  closeOverlay('auth-overlay');
 }
 
 function closeOnboarding(){
@@ -1744,14 +1968,8 @@ function validateLinkInput(input){
 }
 
 // ── PRO ACCESS CONTROL ──
-// Füge hier E-Mail-Adressen hinzu die automatisch Pro bekommen (du + Freunde + Promoter)
-// Beispiel: var proEmails = ['hannes@plateio.app', 'freund@email.at'];
-var proEmails = [
-  'hannes@plateio.app',   // du selbst — immer Pro
-  'owner@plateio.app'     // weiterer Owner-Account
-  // 'freund@email.at',   // Freunde: Zeile auskommentieren zum Aktivieren
-  // 'promoter@email.at'  // Promoter: einfach Zeile hinzufügen
-];
+// Pro-Status kommt jetzt aus Supabase profiles.is_pro
+// Um einem User manuell Pro zu geben: Supabase Dashboard → Table Editor → profiles → is_pro = true
 
 function activatePro(type){
   isPro = true;
@@ -2014,13 +2232,15 @@ function selectFav(idx, el){
 }
 
 // ── ADD MEAL ──
-function addMealToDay(dayKey, meal){
+async function addMealToDay(dayKey, meal){
   if(!meals[dayKey]) meals[dayKey]=[];
   var max = isPro ? 3 : 1;
   if(meals[dayKey].length >= max){
     if(!isPro) openOverlay('upgrade-overlay');
     return;
   }
+  var savedId = await dbSaveMeal(dayKey, meal);
+  if(savedId) meal._id = savedId;
   meals[dayKey].push(meal);
   buildWeekGrid();
   showToast('"'+meal.title+'" gespeichert!');
@@ -2056,7 +2276,7 @@ function startAnalyze(){
   setTimeout(function(){
     document.getElementById('loading-wrap').classList.remove('open');
     document.getElementById('analyze-btn').disabled = false;
-    analysesUsed++;
+    dbIncrementAnalyses();
     updateAnalysisHint();
 
     var r = demoRecipes[Math.floor(Math.random()*demoRecipes.length)];
@@ -2275,7 +2495,7 @@ function toggleDetailEdit(){
   }
 }
 
-function saveDetailEdit(){
+async function saveDetailEdit(){
   if(currentDetailKey===null||currentDetailIdx===null) return;
   var m = meals[currentDetailKey][currentDetailIdx];
   var newTitle = document.getElementById('edit-title').value.trim();
@@ -2284,17 +2504,15 @@ function saveDetailEdit(){
   m.ingredients = document.getElementById('edit-ingredients').value;
   m.steps = document.getElementById('edit-steps').value;
   m.notes = document.getElementById('edit-notes').value;
+  // Supabase update
+  if(m._id) await dbUpdateMeal(m._id, { title: m.title, ingredients: m.ingredients, steps: m.steps, notes: m.notes });
   // Update read mode display
   document.getElementById('detail-modal-title').textContent = m.title;
   document.getElementById('detail-ingredients').textContent = m.ingredients || 'Keine Zutaten angegeben';
   document.getElementById('detail-steps').textContent = m.steps || 'Keine Zubereitung angegeben';
   document.getElementById('detail-notes').textContent = m.notes || 'Keine Notizen';
-  // Also update in favorites if saved there
-  var fi = favorites.findIndex(function(f){ return f.title === m.title || (currentDetailKey && meals[currentDetailKey] && meals[currentDetailKey][currentDetailIdx] === f); });
-  // Rebuild calendar
   buildWeekGrid();
-  // Switch back to read mode
-  detailEditActive = true; // trick toggleDetailEdit into switching off
+  detailEditActive = true;
   toggleDetailEdit();
   showToast('Änderungen gespeichert ✓');
 }
@@ -2305,18 +2523,25 @@ function updateFavBtn(on){
   if(on) btn.classList.add('on'); else btn.classList.remove('on');
 }
 
-function toggleFav(){
+async function toggleFav(){
   if(currentDetailKey===null||currentDetailIdx===null) return;
   var m = meals[currentDetailKey][currentDetailIdx];
   var fi = favorites.findIndex(function(f){ return f.title===m.title; });
   if(fi>=0){
+    var fav = favorites[fi];
+    if(fav._id) await dbDeleteFavorite(fav._id);
     favorites.splice(fi,1);
     m.isFav=false;
+    if(m._id) await dbUpdateMeal(m._id, {isFav: false});
     updateFavBtn(false);
     showToast('Aus Favoriten entfernt');
   } else {
-    favorites.push(Object.assign({},m,{isFav:true}));
+    var newFav = Object.assign({},m,{isFav:true});
+    var savedId = await dbSaveFavorite(newFav);
+    if(savedId) newFav._id = savedId;
+    favorites.push(newFav);
     m.isFav=true;
+    if(m._id) await dbUpdateMeal(m._id, {isFav: true});
     updateFavBtn(true);
     showToast('Zu Favoriten hinzugefügt ♥');
   }
@@ -2324,6 +2549,8 @@ function toggleFav(){
 
 function deleteMeal(){
   if(currentDetailKey&&currentDetailIdx!==null){
+    var meal = meals[currentDetailKey][currentDetailIdx];
+    if(meal && meal._id) dbDeleteMeal(meal._id);
     meals[currentDetailKey].splice(currentDetailIdx,1);
     if(meals[currentDetailKey].length===0) delete meals[currentDetailKey];
     closeOverlay('detail-overlay');
@@ -2345,7 +2572,9 @@ function addFavToDay(idx){
   openAddFromFavs();
 }
 
-function removeFav(idx){
+async function removeFav(idx){
+  var fav = favorites[idx];
+  if(fav && fav._id) await dbDeleteFavorite(fav._id);
   favorites.splice(idx,1);
   renderFavs();
   showToast('Aus Favoriten entfernt');
@@ -2689,17 +2918,6 @@ function changePortions(prefix, delta){
   el.value = Math.max(1, Math.min(20, val+delta));
 }
 
-// ── FORGOT PASSWORD ──
-function openForgotPw(){
-  closeOverlay('auth-overlay');
-  openOverlay('forgotpw-overlay');
-}
-function sendPasswordReset(){
-  var email = document.getElementById('forgotpw-email').value.trim();
-  if(!email){ showToast('Bitte E-Mail eingeben'); return; }
-  closeOverlay('forgotpw-overlay');
-  showToast('Reset-Link wurde gesendet ✓');
-}
 
 // ── AVATAR UPLOAD ──
 function uploadAvatar(input){
@@ -2889,17 +3107,33 @@ function closeAccSection(){
     document.getElementById('acc-section-'+s).style.display='none';
   });
 }
-function confirmDeleteAccount(){
+async function confirmDeleteAccount(){
   if(confirm('Bist du sicher? Dein Account und alle Daten werden unwiderruflich gelöscht.')){
+    if(currentUser){
+      // Daten löschen (Supabase Cascade löscht meals + favorites automatisch)
+      await sb.from('profiles').delete().eq('id', currentUser.id);
+      await sb.auth.admin; // Fallback: einfach ausloggen
+      await sb.auth.signOut();
+    }
     closeOverlay('account-overlay');
-    document.getElementById('page-app').style.display='none';
-    document.getElementById('page-landing').style.display='block';
     showToast('Account wurde gelöscht');
   }
 }
 function updateAccountBadge(){
   var badge = document.getElementById('acc-plan-badge');
   if(badge) badge.textContent = isPro ? 'Pro ✓' : 'Free Plan';
+  // Name + Email aus currentUser befüllen
+  if(currentUser){
+    var nameEl = document.getElementById('acc-name-display');
+    var emailEl = document.getElementById('acc-email-display');
+    var bigAvatar = document.getElementById('acc-avatar-big');
+    var meta = currentUser.user_metadata || {};
+    var name = meta.name || currentUser.email || '';
+    var initials = name.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2) || '?';
+    if(nameEl) nameEl.textContent = meta.name || '—';
+    if(emailEl) emailEl.textContent = currentUser.email || '';
+    if(bigAvatar) bigAvatar.textContent = initials;
+  }
 }
 
 // ── FAQ ──
@@ -2943,18 +3177,13 @@ window.addEventListener('load', function(){
   var linkMatch = (sharedUrl || sharedText).match(/https?:\/\/[^\s]+/);
   var incomingLink = sharedUrl || (linkMatch ? linkMatch[0] : '');
 
-  if(incomingLink){
-    // App-View öffnen (falls Landing Page angezeigt wird)
-    showApp();
+  if(incomingLink && currentUser){
     // Kurze Verzögerung damit die App geladen ist
     setTimeout(function(){
-      var input = document.getElementById('link-input');
+      var input = document.getElementById('ig-url');
       if(input){
         input.value = incomingLink;
-        // URL aus Query-String entfernen (sauberere History)
         window.history.replaceState({}, document.title, '/');
-        // Optional: Analyse direkt starten
-        // analyzeLink();
         showToast('Link aus ' + detectPlatform(incomingLink) + ' empfangen ✓');
       }
     }, 500);

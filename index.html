@@ -148,24 +148,108 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
   content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse 60% 60% at 30% 70%, rgba(74,124,89,.07) 0%, transparent 70%);
 }
-.app-preview{
-  width:100%;max-width:360px;background:#fff;border-radius:20px;
-  border:1px solid rgba(0,0,0,.06);overflow:hidden;
-  box-shadow:0 24px 64px rgba(26,26,22,.12),0 4px 16px rgba(26,26,22,.06);
-  position:relative;z-index:1;
+/* ── Premium Phone Mockup ── */
+.mockup-scene{
+  width:100%;max-width:420px;position:relative;z-index:1;
 }
-.ap-header{background:var(--sage);padding:1rem 1.3rem;display:flex;align-items:center;gap:10px}
-.ap-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
-.ap-title{color:#fff;font-size:.78rem;font-weight:500;letter-spacing:.3px}
-.ap-week{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:.9rem;background:#f8f6f2}
-.ap-day{background:#fff;border-radius:7px;padding:.5rem .3rem;text-align:center}
-.ap-dn{font-size:.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-.ap-img{width:100%;aspect-ratio:1;border-radius:5px;margin-bottom:3px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:var(--sage-l)}
-.ap-img.f{background:var(--sage-m)}
-.ap-fn{font-size:.48rem;color:var(--text);line-height:1.25}
-.ap-input{margin:.8rem;display:flex;gap:6px}
-.ap-inp{flex:1;background:#f5f3ef;border:1px solid var(--border);border-radius:7px;padding:.4rem .7rem;font-size:.62rem;color:var(--muted)}
-.ap-btn{background:var(--sage);color:#fff;border:none;border-radius:7px;padding:.4rem .8rem;font-size:.6rem;cursor:pointer;white-space:nowrap}
+.phone-frame{
+  background:#1a1a16;border-radius:44px;padding:12px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.08),
+    0 40px 80px rgba(26,26,22,.45),
+    0 16px 32px rgba(26,26,22,.25),
+    inset 0 1px 0 rgba(255,255,255,.1);
+  position:relative;
+}
+.phone-frame::before{
+  content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  width:90px;height:26px;background:#1a1a16;border-radius:0 0 18px 18px;z-index:10;
+}
+.phone-screen{
+  background:#faf8f4;border-radius:34px;overflow:hidden;
+  aspect-ratio:9/19.5;position:relative;
+}
+/* Screen top bar */
+.ps-topbar{
+  background:#fff;padding:.55rem 1rem .45rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:0.5px solid #ede8e0;
+  padding-top:1.8rem; /* notch space */
+}
+.ps-logo{font-family:'Fraunces',serif;font-size:.85rem;font-weight:400;color:#1a1a16}
+.ps-logo span{color:#4a7c59}
+.ps-avatar{width:22px;height:22px;border-radius:50%;background:#4a7c59;display:flex;align-items:center;justify-content:center}
+.ps-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+
+/* Week header */
+.ps-week-hdr{padding:.5rem .9rem .3rem;display:flex;align-items:center;justify-content:space-between}
+.ps-week-title{font-family:'Fraunces',serif;font-size:.72rem;font-weight:300;color:#1a1a16}
+.ps-week-nav{display:flex;gap:3px}
+.ps-nav-btn{width:16px;height:16px;border-radius:50%;background:#f0ede8;border:none;display:flex;align-items:center;justify-content:center;font-size:.5rem;color:#7a7a72}
+
+/* Day grid */
+.ps-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:3px;
+  padding:0 .6rem .6rem;
+}
+.ps-day{background:#fff;border-radius:8px;overflow:hidden;border:0.5px solid #ede8e0}
+.ps-day.today{border:1.5px solid #4a7c59;box-shadow:0 0 0 2px rgba(74,124,89,.08)}
+.ps-day-head{padding:.25rem .2rem .15rem;text-align:center;border-bottom:0.5px solid #f0ede8}
+.ps-dn{font-size:.38rem;color:#7a7a72;text-transform:uppercase;letter-spacing:.4px;display:block}
+.ps-dd{font-size:.52rem;font-weight:500;color:#2d2d28}
+.ps-dd.tod{background:#4a7c59;color:#fff;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:.42rem}
+.ps-meal{position:relative;overflow:hidden}
+.ps-meal img{width:100%;height:46px;object-fit:cover;display:block}
+.ps-meal-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.65),transparent);padding:.2rem .25rem .15rem;font-size:.36rem;color:#fff;font-weight:500;line-height:1.2}
+.ps-empty{height:46px;display:flex;align-items:center;justify-content:center;background:#faf8f4}
+.ps-plus{font-size:.9rem;color:#c8c4bc}
+
+/* Import bar in mockup */
+.ps-import{margin:.5rem .6rem;background:#fff;border-radius:8px;border:0.5px solid #ede8e0;padding:.45rem .6rem;display:flex;align-items:center;gap:5px}
+.ps-import-icon{width:14px;height:14px;border-radius:50%;background:#4a7c59;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ps-import-text{flex:1;font-size:.42rem;color:#aaa8a2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps-import-btn{background:#4a7c59;color:#fff;border-radius:5px;padding:.2rem .45rem;font-size:.4rem;font-weight:500;white-space:nowrap;flex-shrink:0}
+
+/* Bottom nav in mockup */
+.ps-bottom{
+  position:absolute;bottom:0;left:0;right:0;
+  background:#fff;border-top:0.5px solid #ede8e0;
+  display:flex;padding:.4rem 0 .8rem;
+}
+.ps-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.35rem;color:#b0aca6;border:none;background:none}
+.ps-btn.active{color:#4a7c59}
+.ps-btn svg{width:12px;height:12px}
+
+/* Floating badges around phone */
+.mockup-badge{
+  position:absolute;background:#fff;border-radius:14px;
+  box-shadow:0 8px 32px rgba(26,26,22,.14),0 2px 8px rgba(26,26,22,.08);
+  padding:.6rem .9rem;white-space:nowrap;
+  animation:badgeFloat 3s ease-in-out infinite;
+}
+.mockup-badge:nth-child(2){ animation-delay:.8s; }
+.mockup-badge:nth-child(3){ animation-delay:1.6s; }
+@keyframes badgeFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+.badge-emoji{font-size:1rem;margin-right:.35rem}
+.badge-text{font-size:.72rem;font-weight:500;color:#1a1a16}
+.badge-sub{font-size:.62rem;color:#7a7a72;margin-top:1px}
+
+/* Decorative blobs behind phone */
+.mockup-blob{
+  position:absolute;border-radius:50%;filter:blur(40px);pointer-events:none;
+}
+
+@media(max-width:900px){
+  .mockup-badge{ display:none; }
+  .mockup-scene{ max-width:280px; }
+}
+@media(max-width:600px){
+  .mockup-scene{ max-width:220px; }
+  .f-left{ padding:3rem 2rem; }
+}
 
 .f-right{padding:5rem 4rem;display:flex;flex-direction:column;justify-content:center}
 .sec-tag{
@@ -422,7 +506,7 @@ footer p{font-size:.78rem;color:var(--muted)}
 .auth-switch a:hover{text-decoration:underline}
 
 /* ── APP ── */
-.app-nav{background:#fff;border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:62px;position:sticky;top:0;z-index:100}
+.app-nav{background:#fff;border-bottom:1px solid var(--border);padding:0 2rem;padding-top:env(safe-area-inset-top);display:flex;align-items:center;justify-content:space-between;height:calc(62px + env(safe-area-inset-top));position:sticky;top:0;z-index:100}
 .app-logo{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:300;color:var(--dark)}
 .app-logo span{color:var(--sage)}
 .app-nav-links{display:flex;gap:4px}
@@ -690,22 +774,173 @@ footer p{font-size:.78rem;color:var(--muted)}
   <!-- Features -->
   <div class="features" id="features">
     <div class="f-left">
-      <div class="app-preview">
-        <div class="ap-header"><div class="ap-dot"></div><div class="ap-title">plateio — Wochenplan</div></div>
-        <div style="padding:.6rem .9rem .3rem;border-bottom:1px solid #f0ede8">
-          <div class="ap-input">
-            <div class="ap-inp">https://www.instagram.com/p/...</div>
-            <div class="ap-btn">Analysieren</div>
+      <!-- Premium Phone Mockup -->
+      <div class="mockup-scene">
+
+        <!-- Decorative blobs -->
+        <div class="mockup-blob" style="width:220px;height:220px;background:rgba(74,124,89,.13);top:-40px;left:-60px"></div>
+        <div class="mockup-blob" style="width:160px;height:160px;background:rgba(200,169,110,.1);bottom:-20px;right:-40px"></div>
+
+        <!-- Floating badges -->
+        <div class="mockup-badge" style="top:12%;right:-30px">
+          <div style="display:flex;align-items:center">
+            <span class="badge-emoji">✨</span>
+            <div>
+              <div class="badge-text">Rezept erkannt</div>
+              <div class="badge-sub">Pasta Carbonara</div>
+            </div>
           </div>
         </div>
-        <div class="ap-week">
-          <div class="ap-day"><div class="ap-dn">Mo</div><div class="ap-img f">🍝</div><div class="ap-fn">Pasta</div></div>
-          <div class="ap-day" style="border:1.5px solid #4a7c59"><div class="ap-dn" style="color:#4a7c59">Di</div><div class="ap-img f">🥗</div><div class="ap-fn">Salad</div></div>
-          <div class="ap-day"><div class="ap-dn">Mi</div><div class="ap-img" style="border:1px dashed #d0ccc4;font-size:.7rem;color:#aaa">+</div></div>
-          <div class="ap-day"><div class="ap-dn">Do</div><div class="ap-img f">🍲</div><div class="ap-fn">Suppe</div></div>
-          <div class="ap-day"><div class="ap-dn">Fr</div><div class="ap-img" style="border:1px dashed #d0ccc4;font-size:.7rem;color:#aaa">+</div></div>
-          <div class="ap-day"><div class="ap-dn">Sa</div><div class="ap-img f">🍕</div><div class="ap-fn">Pizza</div></div>
-          <div class="ap-day"><div class="ap-dn">So</div><div class="ap-img" style="border:1px dashed #d0ccc4;font-size:.7rem;color:#aaa">+</div></div>
+        <div class="mockup-badge" style="bottom:22%;left:-20px">
+          <div style="display:flex;align-items:center">
+            <span class="badge-emoji">🛒</span>
+            <div>
+              <div class="badge-text">Einkaufsliste</div>
+              <div class="badge-sub">12 Zutaten · bereit</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="phone-frame">
+          <div class="phone-screen">
+
+            <!-- Top bar -->
+            <div class="ps-topbar">
+              <div class="ps-logo">plate<span>io</span></div>
+              <div style="display:flex;align-items:center;gap:6px">
+                <div style="font-size:.5rem;background:#e8f0eb;color:#4a7c59;padding:.15rem .5rem;border-radius:20px;font-weight:600">Pro ✓</div>
+                <div class="ps-avatar">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Import bar -->
+            <div class="ps-import">
+              <div class="ps-import-icon">
+                <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              </div>
+              <div class="ps-import-text">instagram.com/p/CxK8mNpL...</div>
+              <div class="ps-import-btn">Analysieren</div>
+            </div>
+
+            <!-- Week header -->
+            <div class="ps-week-hdr">
+              <div class="ps-week-title">Mein Wochenplan</div>
+              <div style="font-size:.4rem;color:#aaa">27.3 – 2.4.</div>
+            </div>
+
+            <!-- Week grid — all 7 days with food photos -->
+            <div class="ps-grid">
+
+              <!-- Mo -->
+              <div class="ps-day">
+                <div class="ps-day-head">
+                  <span class="ps-dn">Mo</span>
+                  <span class="ps-dd">27</span>
+                </div>
+                <div class="ps-meal">
+                  <img src="https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=120&q=80&auto=format&fit=crop" alt="Avocado Toast">
+                  <div class="ps-meal-label">Avocado Toast</div>
+                </div>
+              </div>
+
+              <!-- Di — TODAY -->
+              <div class="ps-day today">
+                <div class="ps-day-head">
+                  <span class="ps-dn" style="color:#4a7c59">Di</span>
+                  <span class="ps-dd tod">28</span>
+                </div>
+                <div class="ps-meal">
+                  <img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=120&q=80&auto=format&fit=crop" alt="Pasta">
+                  <div class="ps-meal-label">Pasta Carbonara</div>
+                </div>
+              </div>
+
+              <!-- Mi -->
+              <div class="ps-day">
+                <div class="ps-day-head">
+                  <span class="ps-dn">Mi</span>
+                  <span class="ps-dd">29</span>
+                </div>
+                <div class="ps-meal">
+                  <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=120&q=80&auto=format&fit=crop" alt="Salat">
+                  <div class="ps-meal-label">Buddha Bowl</div>
+                </div>
+              </div>
+
+              <!-- Do -->
+              <div class="ps-day">
+                <div class="ps-day-head">
+                  <span class="ps-dn">Do</span>
+                  <span class="ps-dd">30</span>
+                </div>
+                <div class="ps-meal">
+                  <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=120&q=80&auto=format&fit=crop" alt="Suppe">
+                  <div class="ps-meal-label">Kürbissuppe</div>
+                </div>
+              </div>
+
+              <!-- Fr -->
+              <div class="ps-day">
+                <div class="ps-day-head">
+                  <span class="ps-dn">Fr</span>
+                  <span class="ps-dd">31</span>
+                </div>
+                <div class="ps-meal">
+                  <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=120&q=80&auto=format&fit=crop" alt="Pizza">
+                  <div class="ps-meal-label">Pizza Margherita</div>
+                </div>
+              </div>
+
+              <!-- Sa -->
+              <div class="ps-day">
+                <div class="ps-day-head">
+                  <span class="ps-dn">Sa</span>
+                  <span class="ps-dd">1</span>
+                </div>
+                <div class="ps-meal">
+                  <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=120&q=80&auto=format&fit=crop" alt="Ramen">
+                  <div class="ps-meal-label">Miso Ramen</div>
+                </div>
+              </div>
+
+              <!-- So -->
+              <div class="ps-day">
+                <div class="ps-day-head">
+                  <span class="ps-dn">So</span>
+                  <span class="ps-dd">2</span>
+                </div>
+                <div class="ps-meal">
+                  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=120&q=80&auto=format&fit=crop" alt="Brunch">
+                  <div class="ps-meal-label">Shakshuka</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Bottom nav -->
+            <div class="ps-bottom">
+              <button class="ps-btn active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Plan
+              </button>
+              <button class="ps-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Favoriten
+              </button>
+              <button class="ps-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                Einkaufen
+              </button>
+              <button class="ps-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Account
+              </button>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
@@ -878,7 +1113,7 @@ footer p{font-size:.78rem;color:var(--muted)}
           <span>Zahlungsmittel ändern</span>
           <span class="acc-arrow">›</span>
         </div>
-        <div class="acc-item" onclick="openOverlay('upgrade-overlay');closeOverlay('account-overlay')">
+        <div class="acc-item" onclick="openUpgradeModal();closeOverlay('account-overlay')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           <span>Plan ändern</span>
           <span class="acc-arrow">›</span>
@@ -1078,7 +1313,7 @@ footer p{font-size:.78rem;color:var(--muted)}
       <div class="field">
         <label>Passwort</label>
         <div style="position:relative">
-          <input type="password" id="auth-pw" placeholder="••••••••" value="demo1234" style="width:100%;padding-right:2.8rem">
+          <input type="password" id="auth-pw" placeholder="••••••••" style="width:100%;padding-right:2.8rem">
           <button type="button" onclick="togglePwVisible('auth-pw','eye-pw')" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:.2rem;line-height:1;display:flex;align-items:center" tabindex="-1" title="Passwort anzeigen">
             <svg id="eye-pw" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
@@ -1093,6 +1328,8 @@ footer p{font-size:.78rem;color:var(--muted)}
           </button>
         </div>
       </div>
+      <!-- Fehler-Box -->
+      <div id="auth-error" style="display:none;background:var(--red-l);border:1px solid #f5c6c6;border-radius:9px;padding:.65rem 1rem;margin-bottom:.5rem;font-size:.83rem;color:var(--red);display:none"></div>
       <button class="btn-full" id="auth-submit-btn" onclick="doAuth()">Anmelden</button>
       <div style="text-align:center;margin-top:.6rem">
         <a id="forgot-pw-link" style="font-size:.78rem;color:var(--sage);cursor:pointer" onclick="openForgotPw()">Passwort vergessen?</a>
@@ -1138,7 +1375,7 @@ footer p{font-size:.78rem;color:var(--muted)}
         <strong>Upgrade auf Pro</strong>
         <p>Unbegrenzte Analysen · 3 Gerichte/Tag · Werbefrei · Einkaufsliste</p>
       </div>
-      <button class="ub-btn" onclick="openOverlay('upgrade-overlay')">Upgrade — 4,99 €/Mo</button>
+      <button class="ub-btn" onclick="openUpgradeModal()">Upgrade — 4,99 €/Mo</button>
     </div>
 
     <!-- Ad banner (free) -->
@@ -1169,7 +1406,7 @@ footer p{font-size:.78rem;color:var(--muted)}
       <div id="link-invalid-warn" style="display:none;margin-top:.5rem;font-size:.75rem;color:var(--red);background:var(--red-l);border-radius:8px;padding:.4rem .8rem">
         ⚠️ Dieser Link wird nicht erkannt. Bitte einen Instagram-, Pinterest- oder Facebook-Link einfügen.
       </div>
-      <div class="limit-warn" id="limit-warn">⚠️ Du hast <span id="analyses-left">0</span> von 5 Analysen diesen Monat verbraucht. <a style="color:var(--sage);cursor:pointer" onclick="openOverlay('upgrade-overlay')">Upgrade auf Pro</a> für unbegrenzte Analysen.</div>
+      <div class="limit-warn" id="limit-warn">⚠️ Du hast <span id="analyses-left">0</span> von 5 Analysen diesen Monat verbraucht. <a style="color:var(--sage);cursor:pointer" onclick="openUpgradeModal()">Upgrade auf Pro</a> für unbegrenzte Analysen.</div>
     </div>
 
     <div class="week-hdr">
@@ -1212,7 +1449,7 @@ footer p{font-size:.78rem;color:var(--muted)}
           <strong>Pro-Feature</strong>
           <p>Die automatische Einkaufsliste ist nur für Pro-Nutzer verfügbar.</p>
         </div>
-        <button class="ub-btn" onclick="openOverlay('upgrade-overlay')">Upgrade — 4,99 €/Mo</button>
+        <button class="ub-btn" onclick="openUpgradeModal()">Upgrade — 4,99 €/Mo</button>
       </div>
     </div>
     <div id="shop-content">
@@ -1585,36 +1822,70 @@ footer p{font-size:.78rem;color:var(--muted)}
 </div>
 
 <!-- ══════════════════════════════════════
-     UPGRADE MODAL
+     UPGRADE / PLAN MODAL
 ══════════════════════════════════════ -->
 <div class="overlay" id="upgrade-overlay">
   <div class="modal upgrade-modal">
     <div class="modal-head">
-      <div class="modal-title">Upgrade auf Pro</div>
+      <div class="modal-title" id="upgrade-modal-title">Upgrade auf Pro</div>
       <button class="modal-close" onclick="closeOverlay('upgrade-overlay')">×</button>
     </div>
     <div class="modal-body">
-      <ul class="up-feats">
-        <li>Unbegrenzte Instagram-Analysen</li>
-        <li>3 Gerichte pro Tag im Kalender</li>
-        <li>Automatische Einkaufsliste</li>
-        <li>Komplett werbefrei</li>
-        <li>Favoriten & Rezept-Sammlung</li>
-      </ul>
-      <div class="upgrade-plans">
-        <div class="up-plan selected" id="up-monthly" onclick="selectPlan('monthly')">
-          <div class="up-plan-name">Monatlich</div>
-          <div class="up-plan-price">4,99 €<span style="font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--muted)">/Mo</span></div>
-          <div class="up-plan-note">Jederzeit kündbar</div>
+
+      <!-- Upgrade View (Free → Pro) -->
+      <div id="upgrade-view">
+        <ul class="up-feats">
+          <li>Unbegrenzte Instagram-Analysen</li>
+          <li>3 Gerichte pro Tag im Kalender</li>
+          <li>Automatische Einkaufsliste</li>
+          <li>Komplett werbefrei</li>
+          <li>Favoriten & Rezept-Sammlung</li>
+        </ul>
+        <div class="upgrade-plans">
+          <div class="up-plan selected" id="up-monthly" onclick="selectPlan('monthly')">
+            <div class="up-plan-name">Monatlich</div>
+            <div class="up-plan-price">4,99 €<span style="font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--muted)">/Mo</span></div>
+            <div class="up-plan-note">Jederzeit kündbar</div>
+          </div>
+          <div class="up-plan" id="up-yearly" onclick="selectPlan('yearly')">
+            <div class="up-plan-name">Jährlich 🎉</div>
+            <div class="up-plan-price">3,33 €<span style="font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--muted)">/Mo</span></div>
+            <div class="up-plan-note">39,99 € / Jahr · 2 Mo. gratis</div>
+          </div>
         </div>
-        <div class="up-plan" id="up-yearly" onclick="selectPlan('yearly')">
-          <div class="up-plan-name">Jährlich 🎉</div>
-          <div class="up-plan-price">3,33 €<span style="font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--muted)">/Mo</span></div>
-          <div class="up-plan-note">39,99 € / Jahr · 2 Mo. gratis</div>
-        </div>
+        <button class="btn-full" style="margin-top:1.2rem" onclick="simulateUpgrade()">Jetzt upgraden (Demo)</button>
+        <div style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:.7rem">Sicher bezahlen mit Stripe · Jederzeit kündbar</div>
       </div>
-      <button class="btn-full" style="margin-top:1.2rem" onclick="simulateUpgrade()">Jetzt upgraden (Demo)</button>
-      <div style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:.7rem">Sicher bezahlen mit Stripe · Jederzeit kündbar</div>
+
+      <!-- Downgrade View (Pro → Free) -->
+      <div id="downgrade-view" style="display:none">
+        <div style="text-align:center;margin-bottom:1.4rem">
+          <div style="font-size:2.2rem;margin-bottom:.5rem">📋</div>
+          <div style="font-family:'Fraunces',serif;font-size:1.1rem;font-weight:300;color:var(--dark);margin-bottom:.4rem">Du bist aktuell auf Pro</div>
+          <div style="font-size:.84rem;color:var(--muted);line-height:1.6">Dein Pro-Abo läuft bis zum Ende der bezahlten Periode weiter. Danach wechselst du automatisch auf den Free-Plan.</div>
+        </div>
+        <div style="background:var(--sage-l);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem">
+          <div style="font-size:.78rem;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem">Was du mit Free behältst</div>
+          <div style="font-size:.83rem;color:var(--text);line-height:1.8">
+            ✓ Alle gespeicherten Rezepte & Mahlzeiten<br>
+            ✓ Deine Favoriten<br>
+            ✓ 5 Analysen pro Monat<br>
+            ✓ 1 Gericht pro Tag
+          </div>
+        </div>
+        <div style="background:var(--red-l);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.4rem">
+          <div style="font-size:.78rem;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem">Was du verlierst</div>
+          <div style="font-size:.83rem;color:var(--text);line-height:1.8">
+            × Unbegrenzte Analysen<br>
+            × 3 Gerichte pro Tag<br>
+            × Automatische Einkaufsliste<br>
+            × Werbefrei
+          </div>
+        </div>
+        <button class="btn-full" style="background:var(--red);margin-bottom:.6rem" onclick="confirmDowngrade()">Abo kündigen</button>
+        <button class="btn-full" style="background:transparent;color:var(--sage);border:1.5px solid var(--sage)" onclick="closeOverlay('upgrade-overlay')">Pro behalten</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1665,9 +1936,19 @@ window.addEventListener('DOMContentLoaded', function() {
   }
   sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
     auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-      detectSessionInUrl: false
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+      storageKey: 'plateio-auth'
+    }
+  });
+
+  // Beim Start: prüfen ob eine gespeicherte Session noch gültig ist
+  sb.auth.getSession().then(function(result){
+    if(result.error){
+      // Ungültige Session — cleanen und neu starten
+      localStorage.removeItem('plateio-auth');
+      sb.auth.signOut();
     }
   });
 
@@ -1914,24 +2195,36 @@ function setAuthUI(){
 }
 function toggleAuthMode(){ authMode = authMode==='login'?'register':'login'; setAuthUI(); }
 
+function showAuthError(msg){
+  var el = document.getElementById('auth-error');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function clearAuthError(){
+  var el = document.getElementById('auth-error');
+  if(el) el.style.display = 'none';
+}
+
 async function doAuth(){
-  if(!sb){ showToast('Verbindung wird aufgebaut, bitte kurz warten...'); return; }
+  if(!sb){ showAuthError('Verbindung wird aufgebaut, bitte kurz warten...'); return; }
+  clearAuthError();
   var email = document.getElementById('auth-email').value.trim().toLowerCase();
   var pw = document.getElementById('auth-pw').value;
   var btn = document.getElementById('auth-submit-btn');
-  if(!email || !pw){ showToast('Bitte E-Mail und Passwort eingeben'); return; }
+  if(!email || !pw){ showAuthError('Bitte E-Mail und Passwort eingeben'); return; }
 
   if(authMode === 'register'){
     var name = document.getElementById('auth-name').value.trim();
     var pwConfirm = document.getElementById('auth-pw-confirm').value;
-    if(pw !== pwConfirm){ showToast('Passwörter stimmen nicht überein'); return; }
-    if(pw.length < 6){ showToast('Passwort muss mindestens 6 Zeichen haben'); return; }
+    if(pw !== pwConfirm){ showAuthError('Passwörter stimmen nicht überein'); return; }
+    if(pw.length < 6){ showAuthError('Passwort muss mindestens 6 Zeichen haben'); return; }
     btn.textContent = 'Registrierung läuft…';
     btn.disabled = true;
     var res = await sb.auth.signUp({ email: email, password: pw, options: { data: { name: name } } });
     btn.disabled = false;
     btn.textContent = 'Registrieren';
-    if(res.error){ showToast('Fehler: ' + res.error.message); return; }
+    if(res.error){ showAuthError('Fehler: ' + res.error.message); return; }
     // Prüfen ob E-Mail-Bestätigung nötig ist
     if(res.data.user && !res.data.session){
       closeOverlay('auth-overlay');
@@ -1950,13 +2243,12 @@ async function doAuth(){
     btn.disabled = false;
     btn.textContent = 'Anmelden';
     if(res.error){
-      // Korrupte Session cleanen und nochmal versuchen
       if(res.error.message.includes('session') || res.error.message.includes('token')){
         localStorage.clear();
-        showToast('Sitzung zurückgesetzt — bitte nochmal versuchen');
+        showAuthError('Sitzung abgelaufen — bitte nochmal versuchen');
         return;
       }
-      showToast('Fehler: ' + (res.error.message === 'Invalid login credentials' ? 'E-Mail oder Passwort falsch' : res.error.message));
+      showAuthError('E-Mail oder Passwort falsch');
       return;
     }
   }
@@ -2272,7 +2564,7 @@ async function addMealToDay(dayKey, meal){
   if(!meals[dayKey]) meals[dayKey]=[];
   var max = isPro ? 3 : 1;
   if(meals[dayKey].length >= max){
-    if(!isPro) openOverlay('upgrade-overlay');
+    if(!isPro) openUpgradeModal();
     return;
   }
   var savedId = await dbSaveMeal(dayKey, meal);
@@ -2297,7 +2589,7 @@ function updateAnalysisHint(){
 
 function startAnalyze(){
   if(!isPro && analysesUsed >= maxAnalysesFree){
-    openOverlay('upgrade-overlay');
+    openUpgradeModal();
     return;
   }
   var url = document.getElementById('ig-url').value.trim();
@@ -2772,7 +3064,34 @@ function toggleShopItem(sid, mealId){
   if(cnt) cnt.textContent = checked===total ? '✓ Erledigt' : (total-checked)+' ausstehend';
 }
 
-// ── UPGRADE ──
+// ── UPGRADE / DOWNGRADE ──
+function openUpgradeModal(){
+  var upgradeView = document.getElementById('upgrade-view');
+  var downgradeView = document.getElementById('downgrade-view');
+  var title = document.getElementById('upgrade-modal-title');
+  if(isPro){
+    upgradeView.style.display = 'none';
+    downgradeView.style.display = 'block';
+    title.textContent = 'Plan ändern';
+  } else {
+    upgradeView.style.display = 'block';
+    downgradeView.style.display = 'none';
+    title.textContent = 'Upgrade auf Pro';
+  }
+  openUpgradeModal();
+}
+
+async function confirmDowngrade(){
+  if(!confirm('Bist du sicher? Dein Pro-Abo wird zum Ende der Laufzeit gekündigt.')) return;
+  // Supabase: pro_cancel_at setzen (in echter App: Stripe Webhook)
+  if(currentUser){
+    await sb.from('profiles').update({
+      pro_cancel_at: new Date().toISOString()
+    }).eq('id', currentUser.id);
+  }
+  closeOverlay('upgrade-overlay');
+  showToast('Abo wird zum Ende der Laufzeit gekündigt ✓');
+}
 var selectedPlan = 'monthly';
 function selectPlan(p){
   selectedPlan=p;
@@ -3263,14 +3582,20 @@ function checkIOSInstall(){
 
 function triggerInstall(){
   if(deferredPrompt){
-    // Android / Chrome
+    // Android / Chrome — nativer Install-Dialog
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(function(result){
       if(result.outcome==='accepted') showToast('Plateio wird installiert! 🎉');
       deferredPrompt=null;
       closePwaBanner();
     });
-    }
+  } else if(isIOS){
+    // iOS — Anleitung anzeigen
+    var popup = document.getElementById('ios-popup');
+    popup.classList.toggle('show');
+    // Popup nach 6 Sekunden automatisch schließen
+    setTimeout(function(){ popup.classList.remove('show'); }, 6000);
+  }
 }
 </script>
 </body>

@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200">
 
 <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1/dist/umd/supabase.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -77,11 +77,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:200;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 3rem;height:62px;
+  padding:0 3rem;
+  padding-top:env(safe-area-inset-top);
+  height:calc(62px + env(safe-area-inset-top));
   background:rgba(250,248,244,0.88);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-bottom:0.5px solid rgba(0,0,0,0.07);
   transition:box-shadow .25s;
+}
+@media(max-width:600px){
+  .nav{padding:0 1.2rem;padding-top:env(safe-area-inset-top);height:calc(56px + env(safe-area-inset-top))}
 }
 .nav.scrolled{box-shadow:0 2px 20px rgba(26,26,22,0.07)}
 .nav-logo{
@@ -124,7 +129,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 }
 
 /* Hero Slider — etwas weniger hoch, Hero beginnt unter dem fixierten Nav */
-.hero{position:relative;height:78vh;min-height:460px;max-height:680px;overflow:hidden;margin-top:62px}
+.hero{position:relative;height:78vh;min-height:460px;max-height:680px;overflow:hidden;margin-top:calc(62px + env(safe-area-inset-top))}
 .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.3s ease}
 .slide.active{opacity:1}
 .slide-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -140,115 +145,137 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 /* ── Features Section ── */
 .features{display:grid;grid-template-columns:1fr 1fr;min-height:600px}
 .f-left{
-  background:linear-gradient(160deg, var(--warm) 0%, #ede8df 100%);
   display:flex;align-items:center;justify-content:center;padding:4rem 3rem;
   position:relative;overflow:hidden;
 }
-.f-left::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 60% at 30% 70%, rgba(74,124,89,.07) 0%, transparent 70%);
-}
+.f-left::before{ display:none; }
 /* ── Premium Phone Mockup ── */
 .mockup-scene{
-  width:100%;max-width:420px;position:relative;z-index:1;
+  width:100%;max-width:400px;position:relative;z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 50px;
+}
+.phone-tilt-wrap{
+  filter:drop-shadow(0 32px 48px rgba(26,26,22,.28)) drop-shadow(0 8px 16px rgba(26,26,22,.15));
+  transition:filter .3s ease;
+}
+.phone-tilt-wrap:hover{
+  filter:drop-shadow(0 40px 60px rgba(26,26,22,.32)) drop-shadow(0 10px 20px rgba(26,26,22,.18));
 }
 .phone-frame{
-  background:#1a1a16;border-radius:44px;padding:12px;
+  background:linear-gradient(160deg,#2a2a24 0%,#1a1a16 60%,#111110 100%);
+  border-radius:44px;padding:10px;
   box-shadow:
-    0 0 0 1px rgba(255,255,255,.08),
-    0 40px 80px rgba(26,26,22,.45),
-    0 16px 32px rgba(26,26,22,.25),
-    inset 0 1px 0 rgba(255,255,255,.1);
-  position:relative;
+    0 0 0 1px rgba(255,255,255,.1),
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -1px 0 rgba(0,0,0,.3);
+  position:relative;width:240px;
 }
+/* Side buttons */
 .phone-frame::before{
-  content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);
-  width:90px;height:26px;background:#1a1a16;border-radius:0 0 18px 18px;z-index:10;
+  content:'';position:absolute;
+  right:-3px;top:80px;width:3px;height:36px;
+  background:linear-gradient(to bottom,#2a2a24,#1a1a16);
+  border-radius:0 3px 3px 0;
+  box-shadow:0 44px 0 #1a1a16;
+}
+/* Notch */
+.phone-notch{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:80px;height:22px;background:#1a1a16;border-radius:0 0 16px 16px;
+  z-index:10;
 }
 .phone-screen{
-  background:#faf8f4;border-radius:34px;overflow:hidden;
-  aspect-ratio:9/19.5;position:relative;
+  background:#faf8f4;border-radius:36px;overflow:hidden;
+  position:relative;
 }
 /* Screen top bar */
 .ps-topbar{
-  background:#fff;padding:.55rem 1rem .45rem;
+  background:#fff;padding:.5rem .85rem .4rem;
   display:flex;align-items:center;justify-content:space-between;
   border-bottom:0.5px solid #ede8e0;
-  padding-top:1.8rem; /* notch space */
+  padding-top:1.6rem;
 }
-.ps-logo{font-family:'Fraunces',serif;font-size:.85rem;font-weight:400;color:#1a1a16}
+.ps-logo{font-family:'Fraunces',serif;font-size:.78rem;font-weight:400;color:#1a1a16}
 .ps-logo span{color:#4a7c59}
-.ps-avatar{width:22px;height:22px;border-radius:50%;background:#4a7c59;display:flex;align-items:center;justify-content:center}
-.ps-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.ps-avatar{width:20px;height:20px;border-radius:50%;background:#4a7c59;display:flex;align-items:center;justify-content:center}
+
+/* Import bar */
+.ps-import{margin:.4rem .55rem;background:#fff;border-radius:8px;border:0.5px solid #ede8e0;padding:.38rem .55rem;display:flex;align-items:center;gap:5px}
+.ps-import-icon{width:13px;height:13px;border-radius:50%;background:#4a7c59;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ps-import-text{flex:1;font-size:.38rem;color:#aaa8a2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps-import-btn{background:#4a7c59;color:#fff;border-radius:5px;padding:.18rem .4rem;font-size:.38rem;font-weight:500;white-space:nowrap;flex-shrink:0}
 
 /* Week header */
-.ps-week-hdr{padding:.5rem .9rem .3rem;display:flex;align-items:center;justify-content:space-between}
-.ps-week-title{font-family:'Fraunces',serif;font-size:.72rem;font-weight:300;color:#1a1a16}
-.ps-week-nav{display:flex;gap:3px}
-.ps-nav-btn{width:16px;height:16px;border-radius:50%;background:#f0ede8;border:none;display:flex;align-items:center;justify-content:center;font-size:.5rem;color:#7a7a72}
+.ps-week-hdr{padding:.4rem .55rem .25rem;display:flex;align-items:center;justify-content:space-between}
+.ps-week-title{font-family:'Fraunces',serif;font-size:.62rem;font-weight:300;color:#1a1a16}
 
-/* Day grid */
+/* Day grid — 4 columns like real mobile */
 .ps-grid{
-  display:grid;grid-template-columns:repeat(7,1fr);gap:3px;
-  padding:0 .6rem .6rem;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
+  padding:0 .55rem .55rem;
 }
 .ps-day{background:#fff;border-radius:8px;overflow:hidden;border:0.5px solid #ede8e0}
-.ps-day.today{border:1.5px solid #4a7c59;box-shadow:0 0 0 2px rgba(74,124,89,.08)}
-.ps-day-head{padding:.25rem .2rem .15rem;text-align:center;border-bottom:0.5px solid #f0ede8}
-.ps-dn{font-size:.38rem;color:#7a7a72;text-transform:uppercase;letter-spacing:.4px;display:block}
-.ps-dd{font-size:.52rem;font-weight:500;color:#2d2d28}
-.ps-dd.tod{background:#4a7c59;color:#fff;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:.42rem}
+.ps-day.today{border:1.5px solid #4a7c59;box-shadow:0 0 0 2px rgba(74,124,89,.1)}
+.ps-day-head{padding:.22rem .2rem .15rem;text-align:center;border-bottom:0.5px solid #f0ede8}
+.ps-dn{font-size:.34rem;color:#7a7a72;text-transform:uppercase;letter-spacing:.3px;display:block}
+.ps-dd{font-size:.46rem;font-weight:500;color:#2d2d28}
+.ps-dd.tod{background:#4a7c59;color:#fff;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:.36rem}
 .ps-meal{position:relative;overflow:hidden}
-.ps-meal img{width:100%;height:46px;object-fit:cover;display:block}
-.ps-meal-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.65),transparent);padding:.2rem .25rem .15rem;font-size:.36rem;color:#fff;font-weight:500;line-height:1.2}
-.ps-empty{height:46px;display:flex;align-items:center;justify-content:center;background:#faf8f4}
-.ps-plus{font-size:.9rem;color:#c8c4bc}
+.ps-meal img{width:100%;height:52px;object-fit:cover;display:block}
+.ps-meal-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);padding:.2rem .25rem .18rem;font-size:.32rem;color:#fff;font-weight:500;line-height:1.2}
+.ps-empty{height:52px;display:flex;align-items:center;justify-content:center;background:#faf8f4;border:1px dashed #ddd8d0;margin:3px;border-radius:5px}
+.ps-plus{font-size:.7rem;color:#c8c4bc}
+/* Row 2 — 3 remaining days -->
+.ps-grid-row2{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:4px;
+  padding:0 .55rem .55rem;
+}
 
-/* Import bar in mockup */
-.ps-import{margin:.5rem .6rem;background:#fff;border-radius:8px;border:0.5px solid #ede8e0;padding:.45rem .6rem;display:flex;align-items:center;gap:5px}
-.ps-import-icon{width:14px;height:14px;border-radius:50%;background:#4a7c59;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ps-import-text{flex:1;font-size:.42rem;color:#aaa8a2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ps-import-btn{background:#4a7c59;color:#fff;border-radius:5px;padding:.2rem .45rem;font-size:.4rem;font-weight:500;white-space:nowrap;flex-shrink:0}
-
-/* Bottom nav in mockup */
+/* Bottom nav */
 .ps-bottom{
-  position:absolute;bottom:0;left:0;right:0;
   background:#fff;border-top:0.5px solid #ede8e0;
-  display:flex;padding:.4rem 0 .8rem;
+  display:flex;padding:.35rem 0 .55rem;
 }
-.ps-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.35rem;color:#b0aca6;border:none;background:none}
+.ps-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.32rem;color:#b0aca6;border:none;background:none;padding:.2rem 0}
 .ps-btn.active{color:#4a7c59}
-.ps-btn svg{width:12px;height:12px}
+.ps-btn svg{width:11px;height:11px}
 
-/* Floating badges around phone */
+/* Floating badges */
 .mockup-badge{
-  position:absolute;background:#fff;border-radius:14px;
-  box-shadow:0 8px 32px rgba(26,26,22,.14),0 2px 8px rgba(26,26,22,.08);
-  padding:.6rem .9rem;white-space:nowrap;
-  animation:badgeFloat 3s ease-in-out infinite;
+  position:absolute;background:#fff;border-radius:16px;
+  box-shadow:0 8px 24px rgba(26,26,22,.12),0 2px 6px rgba(26,26,22,.07);
+  padding:.55rem .85rem;
+  animation:badgeFloat 3.5s ease-in-out infinite;
+  z-index:5;
 }
-.mockup-badge:nth-child(2){ animation-delay:.8s; }
-.mockup-badge:nth-child(3){ animation-delay:1.6s; }
+.mockup-badge:nth-child(2){ animation-delay:1s; }
+.mockup-badge:nth-child(3){ animation-delay:2s; }
 @keyframes badgeFloat{
   0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
+  50%{transform:translateY(-7px)}
 }
-.badge-emoji{font-size:1rem;margin-right:.35rem}
-.badge-text{font-size:.72rem;font-weight:500;color:#1a1a16}
-.badge-sub{font-size:.62rem;color:#7a7a72;margin-top:1px}
+.badge-inner{display:flex;align-items:center;gap:.5rem}
+.badge-emoji{font-size:.95rem}
+.badge-text{font-size:.7rem;font-weight:600;color:#1a1a16;line-height:1.2}
+.badge-sub{font-size:.6rem;color:#7a7a72;margin-top:1px}
 
-/* Decorative blobs behind phone */
-.mockup-blob{
-  position:absolute;border-radius:50%;filter:blur(40px);pointer-events:none;
+/* Background decoration */
+.f-left{
+  background:none !important;
 }
+.f-left::after{ display:none; }
 
 @media(max-width:900px){
-  .mockup-badge{ display:none; }
-  .mockup-scene{ max-width:280px; }
+  .mockup-badge{display:none}
+  .mockup-scene{max-width:300px;padding:30px 30px}
+  .phone-frame{width:200px}
 }
 @media(max-width:600px){
-  .mockup-scene{ max-width:220px; }
-  .f-left{ padding:3rem 2rem; }
+  .mockup-scene{max-width:240px;padding:20px}
+  .phone-frame{width:170px}
+  .f-left{padding:3rem 1rem}
+  .phone-tilt-wrap{transform:perspective(1200px) rotateY(-6deg) rotateX(2deg)}
 }
 
 .f-right{padding:5rem 4rem;display:flex;flex-direction:column;justify-content:center}
@@ -667,8 +694,57 @@ footer p{font-size:.78rem;color:var(--muted)}
 .up-feats li{font-size:.8rem;display:flex;gap:.5rem;align-items:flex-start;color:var(--text)}
 .up-feats li::before{content:'✓';color:var(--sage);flex-shrink:0}
 
-/* Image preview */
-.img-preview{width:100%;height:100px;object-fit:cover;border-radius:8px;margin-top:.5rem;display:none}
+/* ── Feature Tabs ── */
+.feat-tabs{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.6rem;
+}
+.feat-tab{
+  display:flex;align-items:center;gap:6px;
+  padding:.5rem 1rem;border-radius:30px;
+  border:1.5px solid var(--border);
+  background:#fff;color:var(--muted);
+  font-family:'DM Sans',sans-serif;font-size:.82rem;
+  cursor:pointer;transition:all .2s;
+  font-weight:400;
+}
+.feat-tab:hover{border-color:var(--sage-m);color:var(--sage)}
+.feat-tab.active{
+  background:var(--sage);border-color:var(--sage);
+  color:#fff;font-weight:500;
+  box-shadow:0 4px 14px rgba(74,124,89,.25);
+}
+.feat-tab-icon{font-size:.9rem}
+
+/* Feature panels */
+.feat-panels{position:relative;min-height:180px}
+.feat-panel{
+  display:none;
+  animation:fadeUp .3s ease forwards;
+}
+.feat-panel.active{display:block}
+.feat-panel-title{
+  font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;
+  color:var(--dark);margin-bottom:.6rem;line-height:1.25;
+}
+.feat-panel-desc{
+  font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:1rem;
+}
+.feat-list{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.feat-list li{
+  font-size:.84rem;color:var(--text);
+  display:flex;align-items:flex-start;gap:.6rem;line-height:1.4;
+}
+.feat-list li::before{
+  content:'✓';color:var(--sage);font-weight:700;
+  flex-shrink:0;margin-top:1px;font-size:.8rem;
+}
+
+/* Phone screen switcher */
+.ps-screen{
+  display:none;
+  animation:fadeUp .25s ease forwards;
+}
+.ps-screen.active{display:block}
 
 @media(max-width:900px){
   .features{grid-template-columns:1fr}
@@ -774,186 +850,267 @@ footer p{font-size:.78rem;color:var(--muted)}
   <!-- Features -->
   <div class="features" id="features">
     <div class="f-left">
-      <!-- Premium Phone Mockup -->
+      <!-- Premium Phone Mockup — perspective tilted -->
       <div class="mockup-scene">
 
-        <!-- Decorative blobs -->
-        <div class="mockup-blob" style="width:220px;height:220px;background:rgba(74,124,89,.13);top:-40px;left:-60px"></div>
-        <div class="mockup-blob" style="width:160px;height:160px;background:rgba(200,169,110,.1);bottom:-20px;right:-40px"></div>
-
-        <!-- Floating badges -->
-        <div class="mockup-badge" style="top:12%;right:-30px">
-          <div style="display:flex;align-items:center">
+        <!-- Floating badge top right -->
+        <div class="mockup-badge" style="top:5%;right:-10px">
+          <div class="badge-inner">
             <span class="badge-emoji">✨</span>
             <div>
-              <div class="badge-text">Rezept erkannt</div>
-              <div class="badge-sub">Pasta Carbonara</div>
+              <div class="badge-text">KI-Analyse</div>
+              <div class="badge-sub">Rezept erkannt</div>
             </div>
           </div>
         </div>
-        <div class="mockup-badge" style="bottom:22%;left:-20px">
-          <div style="display:flex;align-items:center">
+
+        <!-- Floating badge bottom left -->
+        <div class="mockup-badge" style="bottom:12%;left:-15px">
+          <div class="badge-inner">
             <span class="badge-emoji">🛒</span>
             <div>
               <div class="badge-text">Einkaufsliste</div>
-              <div class="badge-sub">12 Zutaten · bereit</div>
+              <div class="badge-sub">12 Zutaten · ready</div>
             </div>
           </div>
         </div>
 
-        <!-- Phone -->
-        <div class="phone-frame">
-          <div class="phone-screen">
+        <!-- Phone with 3D tilt -->
+        <div class="phone-tilt-wrap">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
 
-            <!-- Top bar -->
-            <div class="ps-topbar">
-              <div class="ps-logo">plate<span>io</span></div>
-              <div style="display:flex;align-items:center;gap:6px">
-                <div style="font-size:.5rem;background:#e8f0eb;color:#4a7c59;padding:.15rem .5rem;border-radius:20px;font-weight:600">Pro ✓</div>
-                <div class="ps-avatar">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <!-- SCREEN: KI-Analyse (default) -->
+              <div class="ps-screen active" id="ps-analyse">
+                <div class="ps-topbar">
+                  <div class="ps-logo">plate<span>io</span></div>
+                  <div class="ps-avatar"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                </div>
+                <!-- Link eingefügt -->
+                <div class="ps-import" style="background:#e8f0eb;border-color:#8fb89e">
+                  <div class="ps-import-icon"><svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+                  <div class="ps-import-text" style="color:#3d6b4a;font-weight:500">instagram.com/p/CxK8mNpLq3r/</div>
+                  <div class="ps-import-btn">✓ Analysiert</div>
+                </div>
+                <!-- Rezeptkarte -->
+                <div style="margin:.4rem .55rem;background:#fff;border-radius:8px;border:0.5px solid #ede8e0;overflow:hidden">
+                  <img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=300&q=80&auto=format&fit=crop" style="width:100%;height:70px;object-fit:cover;display:block">
+                  <div style="padding:.4rem .55rem .5rem">
+                    <div style="font-family:'Fraunces',serif;font-size:.62rem;font-weight:400;color:#1a1a16;margin-bottom:.2rem">Pasta Carbonara</div>
+                    <div style="font-size:.36rem;color:#7a7a72;margin-bottom:.3rem;line-height:1.5">400g Spaghetti · 150g Pancetta · 4 Eigelb · 50g Pecorino · Pfeffer</div>
+                    <div style="display:flex;gap:3px">
+                      <div style="background:#e8f0eb;color:#4a7c59;font-size:.32rem;padding:.1rem .3rem;border-radius:4px;font-weight:500">✓ Zutaten erkannt</div>
+                      <div style="background:#e8f0eb;color:#4a7c59;font-size:.32rem;padding:.1rem .3rem;border-radius:4px;font-weight:500">✓ Schritte erkannt</div>
+                    </div>
+                    <div style="margin-top:.4rem;display:flex;gap:3px">
+                      <div style="flex:1;background:#4a7c59;color:#fff;border-radius:5px;padding:.22rem;font-size:.36rem;font-weight:500;text-align:center">In Wochenplan</div>
+                      <div style="background:#f5f3ef;border:0.5px solid #ede8e0;border-radius:5px;padding:.22rem .4rem;font-size:.36rem;color:#7a7a72;text-align:center">♥</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ps-bottom">
+                  <button class="ps-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Plan</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Favoriten</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Einkaufen</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account</button>
                 </div>
               </div>
+
+              <!-- SCREEN: Wochenplan -->
+              <div class="ps-screen" id="ps-wochenplan">
+                <div class="ps-topbar">
+                  <div class="ps-logo">plate<span>io</span></div>
+                  <div style="font-size:.38rem;background:#e8f0eb;color:#4a7c59;padding:.12rem .4rem;border-radius:20px;font-weight:600">Pro ✓</div>
+                </div>
+                <div class="ps-import">
+                  <div class="ps-import-icon"><svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+                  <div class="ps-import-text">instagram.com/p/CxK8mNpLq3r/</div>
+                  <div class="ps-import-btn">Analysieren</div>
+                </div>
+                <div class="ps-week-hdr">
+                  <div class="ps-week-title">Mein Wochenplan</div>
+                  <div style="font-size:.36rem;color:#aaa">27.3 – 2.4.</div>
+                </div>
+                <div class="ps-grid">
+                  <div class="ps-day today"><div class="ps-day-head"><span class="ps-dn" style="color:#4a7c59">Mo</span><span class="ps-dd tod">27</span></div><div class="ps-meal"><img src="https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=160&q=80&auto=format&fit=crop" alt=""><div class="ps-meal-label">Avocado Toast</div></div></div>
+                  <div class="ps-day"><div class="ps-day-head"><span class="ps-dn">Di</span><span class="ps-dd">28</span></div><div class="ps-meal"><img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=160&q=80&auto=format&fit=crop" alt=""><div class="ps-meal-label">Carbonara</div></div></div>
+                  <div class="ps-day"><div class="ps-day-head"><span class="ps-dn">Mi</span><span class="ps-dd">29</span></div><div class="ps-meal"><img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=160&q=80&auto=format&fit=crop" alt=""><div class="ps-meal-label">Buddha Bowl</div></div></div>
+                  <div class="ps-day"><div class="ps-day-head"><span class="ps-dn">Do</span><span class="ps-dd">30</span></div><div class="ps-meal"><img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=160&q=80&auto=format&fit=crop" alt=""><div class="ps-meal-label">Kürbissuppe</div></div></div>
+                </div>
+                <div class="ps-grid-row2">
+                  <div class="ps-day"><div class="ps-day-head"><span class="ps-dn">Fr</span><span class="ps-dd">31</span></div><div class="ps-meal"><img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=160&q=80&auto=format&fit=crop" alt=""><div class="ps-meal-label">Pizza</div></div></div>
+                  <div class="ps-day"><div class="ps-day-head"><span class="ps-dn">Sa</span><span class="ps-dd">1</span></div><div class="ps-meal"><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=160&q=80&auto=format&fit=crop" alt=""><div class="ps-meal-label">Miso Ramen</div></div></div>
+                  <div class="ps-day"><div class="ps-day-head"><span class="ps-dn">So</span><span class="ps-dd">2</span></div><div class="ps-meal"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=160&q=80&auto=format&fit=crop" alt=""><div class="ps-meal-label">Shakshuka</div></div></div>
+                </div>
+                <div class="ps-bottom">
+                  <button class="ps-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Plan</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Favoriten</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Einkaufen</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account</button>
+                </div>
+              </div>
+
+              <!-- SCREEN: Einkaufsliste -->
+              <div class="ps-screen" id="ps-einkauf">
+                <div class="ps-topbar">
+                  <div class="ps-logo">plate<span>io</span></div>
+                  <div style="font-size:.38rem;background:#e8f0eb;color:#4a7c59;padding:.12rem .4rem;border-radius:20px;font-weight:600">Pro ✓</div>
+                </div>
+                <div style="padding:.5rem .55rem .2rem;font-family:'Fraunces',serif;font-size:.68rem;font-weight:300;color:#1a1a16">Einkaufsliste</div>
+                <div style="padding:0 .55rem;font-size:.36rem;color:#7a7a72;margin-bottom:.4rem">7 Gerichte · 23 Zutaten</div>
+                <!-- Shop items -->
+                <div style="padding:0 .55rem;display:flex;flex-direction:column;gap:3px">
+                  <div style="background:#fff;border-radius:6px;border:0.5px solid #ede8e0;padding:.3rem .5rem;display:flex;align-items:center;gap:.4rem">
+                    <div style="width:11px;height:11px;border-radius:50%;border:1.5px solid #4a7c59;background:#4a7c59;flex-shrink:0;display:flex;align-items:center;justify-content:center"><svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div style="flex:1;font-size:.4rem;color:#aaa;text-decoration:line-through">400g Spaghetti</div>
+                    <div style="font-size:.32rem;background:#e8f0eb;color:#4a7c59;padding:.08rem .28rem;border-radius:4px">🍝 Di</div>
+                  </div>
+                  <div style="background:#fff;border-radius:6px;border:0.5px solid #ede8e0;padding:.3rem .5rem;display:flex;align-items:center;gap:.4rem">
+                    <div style="width:11px;height:11px;border-radius:50%;border:1.5px solid #ddd;flex-shrink:0"></div>
+                    <div style="flex:1;font-size:.4rem;color:#2d2d28">2 Avocados</div>
+                    <div style="font-size:.32rem;background:#e8f0eb;color:#4a7c59;padding:.08rem .28rem;border-radius:4px">🥑 Mo</div>
+                  </div>
+                  <div style="background:#fff;border-radius:6px;border:0.5px solid #ede8e0;padding:.3rem .5rem;display:flex;align-items:center;gap:.4rem">
+                    <div style="width:11px;height:11px;border-radius:50%;border:1.5px solid #ddd;flex-shrink:0"></div>
+                    <div style="flex:1;font-size:.4rem;color:#2d2d28">150g Pancetta</div>
+                    <div style="font-size:.32rem;background:#e8f0eb;color:#4a7c59;padding:.08rem .28rem;border-radius:4px">🍝 Di</div>
+                  </div>
+                  <div style="background:#fff;border-radius:6px;border:0.5px solid #ede8e0;padding:.3rem .5rem;display:flex;align-items:center;gap:.4rem">
+                    <div style="width:11px;height:11px;border-radius:50%;border:1.5px solid #ddd;flex-shrink:0"></div>
+                    <div style="flex:1;font-size:.4rem;color:#2d2d28">1 Hokkaido-Kürbis</div>
+                    <div style="font-size:.32rem;background:#e8f0eb;color:#4a7c59;padding:.08rem .28ren;border-radius:4px">🎃 Do</div>
+                  </div>
+                  <div style="background:#fff;border-radius:6px;border:0.5px solid #ede8e0;padding:.3rem .5rem;display:flex;align-items:center;gap:.4rem">
+                    <div style="width:11px;height:11px;border-radius:50%;border:1.5px solid #ddd;flex-shrink:0"></div>
+                    <div style="flex:1;font-size:.4rem;color:#2d2d28">200ml Kokosmilch</div>
+                    <div style="font-size:.32rem;background:#e8f0eb;color:#4a7c59;padding:.08rem .28rem;border-radius:4px">🎃 Do</div>
+                  </div>
+                  <div style="background:#fff;border-radius:6px;border:0.5px solid #ede8e0;padding:.3rem .5rem;display:flex;align-items:center;gap:.4rem">
+                    <div style="width:11px;height:11px;border-radius:50%;border:1.5px solid #ddd;flex-shrink:0"></div>
+                    <div style="flex:1;font-size:.4rem;color:#2d2d28">Ramen Nudeln</div>
+                    <div style="font-size:.32rem;background:#e8f0eb;color:#4a7c59;padding:.08rem .28rem;border-radius:4px">🍜 Sa</div>
+                  </div>
+                  <div style="background:#4a7c59;border-radius:6px;padding:.35rem .5rem;display:flex;align-items:center;justify-content:center;gap:.3rem;margin-top:.2rem">
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                    <div style="font-size:.38rem;color:#fff;font-weight:500">Per WhatsApp teilen</div>
+                  </div>
+                </div>
+                <div class="ps-bottom" style="margin-top:.4rem">
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Plan</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Favoriten</button>
+                  <button class="ps-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Einkaufen</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account</button>
+                </div>
+              </div>
+
+              <!-- SCREEN: Favoriten -->
+              <div class="ps-screen" id="ps-favoriten">
+                <div class="ps-topbar">
+                  <div class="ps-logo">plate<span>io</span></div>
+                  <div class="ps-avatar"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                </div>
+                <div style="padding:.5rem .55rem .3rem;font-family:'Fraunces',serif;font-size:.68rem;font-weight:300;color:#1a1a16">Meine Favoriten</div>
+                <!-- Search bar -->
+                <div style="margin:0 .55rem .4rem;background:#f5f3ef;border-radius:6px;padding:.28rem .5rem;font-size:.38rem;color:#aaa">🔍 Favoriten durchsuchen...</div>
+                <!-- Favorites grid -->
+                <div style="padding:0 .55rem;display:grid;grid-template-columns:1fr 1fr;gap:5px">
+                  <div style="background:#fff;border-radius:8px;border:0.5px solid #ede8e0;overflow:hidden">
+                    <img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=160&q=80&auto=format&fit=crop" style="width:100%;height:42px;object-fit:cover;display:block">
+                    <div style="padding:.28rem .35rem"><div style="font-size:.38rem;font-weight:500;color:#1a1a16;line-height:1.3">Pasta Carbonara</div><div style="font-size:.32rem;color:#4a7c59;margin-top:2px">♥ Favorit</div></div>
+                  </div>
+                  <div style="background:#fff;border-radius:8px;border:0.5px solid #ede8e0;overflow:hidden">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=160&q=80&auto=format&fit=crop" style="width:100%;height:42px;object-fit:cover;display:block">
+                    <div style="padding:.28rem .35rem"><div style="font-size:.38rem;font-weight:500;color:#1a1a16;line-height:1.3">Buddha Bowl</div><div style="font-size:.32rem;color:#4a7c59;margin-top:2px">♥ Favorit</div></div>
+                  </div>
+                  <div style="background:#fff;border-radius:8px;border:0.5px solid #ede8e0;overflow:hidden">
+                    <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=160&q=80&auto=format&fit=crop" style="width:100%;height:42px;object-fit:cover;display:block">
+                    <div style="padding:.28rem .35rem"><div style="font-size:.38rem;font-weight:500;color:#1a1a16;line-height:1.3">Kürbiscremesuppe</div><div style="font-size:.32rem;color:#4a7c59;margin-top:2px">♥ Favorit</div></div>
+                  </div>
+                  <div style="background:#fff;border-radius:8px;border:0.5px solid #ede8e0;overflow:hidden">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=160&q=80&auto=format&fit=crop" style="width:100%;height:42px;object-fit:cover;display:block">
+                    <div style="padding:.28rem .35rem"><div style="font-size:.38rem;font-weight:500;color:#1a1a16;line-height:1.3">Pizza Margherita</div><div style="font-size:.32rem;color:#4a7c59;margin-top:2px">♥ Favorit</div></div>
+                  </div>
+                </div>
+                <div class="ps-bottom" style="margin-top:.5rem">
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Plan</button>
+                  <button class="ps-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Favoriten</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Einkaufen</button>
+                  <button class="ps-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account</button>
+                </div>
+              </div>
+
             </div>
-
-            <!-- Import bar -->
-            <div class="ps-import">
-              <div class="ps-import-icon">
-                <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              </div>
-              <div class="ps-import-text">instagram.com/p/CxK8mNpL...</div>
-              <div class="ps-import-btn">Analysieren</div>
-            </div>
-
-            <!-- Week header -->
-            <div class="ps-week-hdr">
-              <div class="ps-week-title">Mein Wochenplan</div>
-              <div style="font-size:.4rem;color:#aaa">27.3 – 2.4.</div>
-            </div>
-
-            <!-- Week grid — all 7 days with food photos -->
-            <div class="ps-grid">
-
-              <!-- Mo -->
-              <div class="ps-day">
-                <div class="ps-day-head">
-                  <span class="ps-dn">Mo</span>
-                  <span class="ps-dd">27</span>
-                </div>
-                <div class="ps-meal">
-                  <img src="https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=120&q=80&auto=format&fit=crop" alt="Avocado Toast">
-                  <div class="ps-meal-label">Avocado Toast</div>
-                </div>
-              </div>
-
-              <!-- Di — TODAY -->
-              <div class="ps-day today">
-                <div class="ps-day-head">
-                  <span class="ps-dn" style="color:#4a7c59">Di</span>
-                  <span class="ps-dd tod">28</span>
-                </div>
-                <div class="ps-meal">
-                  <img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=120&q=80&auto=format&fit=crop" alt="Pasta">
-                  <div class="ps-meal-label">Pasta Carbonara</div>
-                </div>
-              </div>
-
-              <!-- Mi -->
-              <div class="ps-day">
-                <div class="ps-day-head">
-                  <span class="ps-dn">Mi</span>
-                  <span class="ps-dd">29</span>
-                </div>
-                <div class="ps-meal">
-                  <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=120&q=80&auto=format&fit=crop" alt="Salat">
-                  <div class="ps-meal-label">Buddha Bowl</div>
-                </div>
-              </div>
-
-              <!-- Do -->
-              <div class="ps-day">
-                <div class="ps-day-head">
-                  <span class="ps-dn">Do</span>
-                  <span class="ps-dd">30</span>
-                </div>
-                <div class="ps-meal">
-                  <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=120&q=80&auto=format&fit=crop" alt="Suppe">
-                  <div class="ps-meal-label">Kürbissuppe</div>
-                </div>
-              </div>
-
-              <!-- Fr -->
-              <div class="ps-day">
-                <div class="ps-day-head">
-                  <span class="ps-dn">Fr</span>
-                  <span class="ps-dd">31</span>
-                </div>
-                <div class="ps-meal">
-                  <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=120&q=80&auto=format&fit=crop" alt="Pizza">
-                  <div class="ps-meal-label">Pizza Margherita</div>
-                </div>
-              </div>
-
-              <!-- Sa -->
-              <div class="ps-day">
-                <div class="ps-day-head">
-                  <span class="ps-dn">Sa</span>
-                  <span class="ps-dd">1</span>
-                </div>
-                <div class="ps-meal">
-                  <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=120&q=80&auto=format&fit=crop" alt="Ramen">
-                  <div class="ps-meal-label">Miso Ramen</div>
-                </div>
-              </div>
-
-              <!-- So -->
-              <div class="ps-day">
-                <div class="ps-day-head">
-                  <span class="ps-dn">So</span>
-                  <span class="ps-dd">2</span>
-                </div>
-                <div class="ps-meal">
-                  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=120&q=80&auto=format&fit=crop" alt="Brunch">
-                  <div class="ps-meal-label">Shakshuka</div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Bottom nav -->
-            <div class="ps-bottom">
-              <button class="ps-btn active">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Plan
-              </button>
-              <button class="ps-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                Favoriten
-              </button>
-              <button class="ps-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
-                Einkaufen
-              </button>
-              <button class="ps-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                Account
-              </button>
-            </div>
-
           </div>
         </div>
       </div>
     </div>
     <div class="f-right">
-      <div class="sec-tag">So funktioniert es</div>
-      <h2 class="sec-title">Von gespeichert zu gekocht —<br><em>in drei Schritten</em></h2>
-      <p class="sec-sub">Kein Chaos mehr in deinen gespeicherten Posts. Kein Rezept geht mehr verloren.</p>
-      <div class="steps">
-        <div class="step"><div class="snum">1</div><div class="stxt"><strong>Link kopieren — fertig</strong><p>Rezept auf Instagram, Pinterest oder Facebook entdeckt? Link kopieren, in Plateio einfügen. Das war's.</p></div></div>
-        <div class="step"><div class="snum">2</div><div class="stxt"><strong>Saubere Rezeptkarte, sofort</strong><p>Plateio erkennt automatisch Titel, Zutaten und Zubereitung. Eigenes Foto hinzufügen für den letzten Appetit-Faktor — und alles sieht aus wie aus einem Kochbuch.</p></div></div>
-        <div class="step"><div class="snum">3</div><div class="stxt"><strong>Plan befüllen — Einkaufsliste done</strong><p>Rezept einem Tag zuweisen, es erscheint im Wochenplan. Die Einkaufsliste für die ganze Woche generiert sich automatisch.</p></div></div>
+      <div class="sec-tag">Features</div>
+      <h2 class="sec-title">Alles was du brauchst —<br><em>in einer App</em></h2>
+
+      <!-- Feature Tabs -->
+      <div class="feat-tabs">
+        <button class="feat-tab active" onclick="switchFeature('analyse',this)">
+          <span class="feat-tab-icon">✨</span> KI-Analyse
+        </button>
+        <button class="feat-tab" onclick="switchFeature('wochenplan',this)">
+          <span class="feat-tab-icon">📅</span> Wochenplan
+        </button>
+        <button class="feat-tab" onclick="switchFeature('einkauf',this)">
+          <span class="feat-tab-icon">🛒</span> Einkaufsliste
+        </button>
+        <button class="feat-tab" onclick="switchFeature('favoriten',this)">
+          <span class="feat-tab-icon">♥</span> Favoriten
+        </button>
       </div>
-      <div class="auth-row">
+
+      <!-- Feature Content Panels -->
+      <div class="feat-panels">
+
+        <div class="feat-panel active" id="fp-analyse">
+          <h3 class="feat-panel-title">Instagram-Link rein — Rezept raus</h3>
+          <p class="feat-panel-desc">Kopiere einen Link von Instagram, Pinterest oder Facebook und füge ihn in Plateio ein. Die KI erkennt automatisch Titel, Zutaten und alle Zubereitungsschritte — sauber strukturiert, sofort bereit zum Kochen.</p>
+          <ul class="feat-list">
+            <li>Funktioniert mit Instagram, Pinterest & Facebook</li>
+            <li>Erkennt Zutaten, Mengen & Zubereitungsschritte automatisch</li>
+            <li>Eigenes Foto oder Screenshot vom fertigen Gericht hochladen — für den echten Appetit-Faktor</li>
+          </ul>
+        </div>
+
+        <div class="feat-panel" id="fp-wochenplan">
+          <h3 class="feat-panel-title">Nie wieder "was koche ich heute?"</h3>
+          <p class="feat-panel-desc">Plane deine Woche in Minuten statt Stunden. Rezepte per Klick einem Tag zuweisen — dein Wochenplan füllt sich mit appetitlichen Fotos und du weißt jeden Tag genau was auf den Tisch kommt.</p>
+          <ul class="feat-list">
+            <li>Übersichtlicher 7-Tage-Kalender auf einen Blick</li>
+            <li>Bis zu 3 Gerichte pro Tag planbar (Pro)</li>
+            <li>Vorherige Wochen einsehen & Rezepte wiederverwenden</li>
+          </ul>
+        </div>
+
+        <div class="feat-panel" id="fp-einkauf">
+          <h3 class="feat-panel-title">Der Wocheneinkauf — in einer Minute erledigt</h3>
+          <p class="feat-panel-desc">Plateio fasst alle Zutaten deiner geplanten Gerichte automatisch zu einer fertigen Einkaufsliste zusammen. Einfach per WhatsApp an den Mitbewohner, Partner oder Freund schicken — und der Einkauf ist delegiert.</p>
+          <ul class="feat-list">
+            <li>Alle Zutaten der Woche automatisch kombiniert</li>
+            <li>Doppelte Zutaten werden intelligent zusammengeführt</li>
+            <li>Per WhatsApp teilen oder als PDF für unterwegs exportieren</li>
+          </ul>
+        </div>
+
+        <div class="feat-panel" id="fp-favoriten">
+          <h3 class="feat-panel-title">Dein persönliches digitales Kochbuch</h3>
+          <p class="feat-panel-desc">Speichere die besten Rezepte als Favoriten und baue dir so nach und nach dein eigenes Kochbuch auf — kuratiert, durchsuchbar und immer griffbereit. Direkt aus der Sammlung in den Wochenplan ziehen.</p>
+          <ul class="feat-list">
+            <li>Unbegrenzt Rezepte in deiner Sammlung speichern</li>
+            <li>Schnellsuche durch dein persönliches Kochbuch</li>
+            <li>Ein Klick — und das Rezept landet im Wochenplan</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="auth-row" style="margin-top:2rem">
         <button class="btn-primary" onclick="openAuth('register')">Kostenlos starten</button>
         <button class="btn-outline" onclick="openAuth('login')">Anmelden</button>
       </div>
@@ -1921,61 +2078,35 @@ footer p{font-size:.78rem;color:var(--muted)}
 //  SUPABASE SETUP
 // ══════════════════════════════════════════════════════════
 var SUPA_URL = 'https://zhezghhcstbjyhclijsn.supabase.co';
-var SUPA_KEY = 'sb_publishable_oVPWnjPgV3mxblkGP0y2wA_2I2X8xKs';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoZXpnaGhjc3RianloY2xpanNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NTcwNDgsImV4cCI6MjA5MDEzMzA0OH0.Za1NMugBADP0vMCFFiNx0EuwGUlS4Znj_tmfD3Wyglg';
 var sb = null;
 var currentUser = null;
 
-// Supabase wird nach dem Laden der Seite initialisiert
-window.addEventListener('DOMContentLoaded', function() {
-  if(typeof supabase === 'undefined') {
+window.addEventListener('DOMContentLoaded', function(){
+  if(typeof supabase === 'undefined'){
     console.error('Supabase CDN nicht geladen!');
     document.body.insertAdjacentHTML('afterbegin',
       '<div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#e05252;color:#fff;padding:.8rem 1.2rem;text-align:center;font-size:.88rem">'+
       '⚠️ Verbindungsfehler — bitte Seite neu laden</div>');
     return;
   }
-  sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true,
-      storageKey: 'plateio-auth'
-    }
-  });
 
-  // Beim Start: prüfen ob eine gespeicherte Session noch gültig ist
-  sb.auth.getSession().then(function(result){
-    if(result.error){
-      // Ungültige Session — cleanen und neu starten
-      localStorage.removeItem('plateio-auth');
-      sb.auth.signOut();
-    }
-  });
+  sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  // Beim Start prüfen ob noch eine gültige Session da ist
+  var existing = sb.auth.session();
+  if(existing && existing.user){
+    currentUser = existing.user;
+    onUserLoggedIn(existing.user, false);
+  }
 
   // Auth-State überwachen
-  sb.auth.onAuthStateChange(async function(event, session){
-    if(event === 'TOKEN_REFRESHED' && !session){
-      // Token konnte nicht erneuert werden — Session löschen und neu einloggen
-      localStorage.clear();
-      location.reload();
-      return;
-    }
-    if(session && session.user){
+  sb.auth.onAuthStateChange(function(event, session){
+    if(event === 'SIGNED_IN' && session && session.user){
       currentUser = session.user;
-      await loadProfile();
-      await loadMeals();
-      await loadFavorites();
-      document.getElementById('page-landing').style.display = 'none';
-      document.getElementById('page-app').style.display = 'block';
-      buildWeekGrid();
-      renderFavs();
-      renderShopPage();
-      updateAnalysisHint();
-      if(event === 'SIGNED_IN'){
-        closeOverlay('auth-overlay');
-        checkIOSInstall();
-      }
-    } else {
+      onUserLoggedIn(session.user, true);
+    }
+    if(event === 'SIGNED_OUT'){
       currentUser = null;
       isPro = false;
       meals = {};
@@ -1985,6 +2116,22 @@ window.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+async function onUserLoggedIn(user, isNew){
+  await loadProfile();
+  await loadMeals();
+  await loadFavorites();
+  document.getElementById('page-landing').style.display = 'none';
+  document.getElementById('page-app').style.display = 'block';
+  buildWeekGrid();
+  renderFavs();
+  renderShopPage();
+  updateAnalysisHint();
+  if(isNew){
+    closeOverlay('auth-overlay');
+    checkIOSInstall();
+  }
+}
 
 // ── STATE ──
 var isPro = false;
@@ -2221,12 +2368,11 @@ async function doAuth(){
     if(pw.length < 6){ showAuthError('Passwort muss mindestens 6 Zeichen haben'); return; }
     btn.textContent = 'Registrierung läuft…';
     btn.disabled = true;
-    var res = await sb.auth.signUp({ email: email, password: pw, options: { data: { name: name } } });
+    var res = await sb.auth.signUp({ email: email, password: pw }, { data: { name: name } });
     btn.disabled = false;
     btn.textContent = 'Registrieren';
     if(res.error){ showAuthError('Fehler: ' + res.error.message); return; }
-    // Prüfen ob E-Mail-Bestätigung nötig ist
-    if(res.data.user && !res.data.session){
+    if(res.user && !res.session){
       closeOverlay('auth-overlay');
       showEmailConfirmBanner(email);
     } else {
@@ -2235,19 +2381,10 @@ async function doAuth(){
   } else {
     btn.textContent = 'Anmeldung läuft…';
     btn.disabled = true;
-    // Alte Session-Daten cleanen bevor neuer Login
-    Object.keys(localStorage).forEach(function(k){
-      if(k.startsWith('sb-')) localStorage.removeItem(k);
-    });
-    var res = await sb.auth.signInWithPassword({ email: email, password: pw });
+    var res = await sb.auth.signIn({ email: email, password: pw });
     btn.disabled = false;
     btn.textContent = 'Anmelden';
     if(res.error){
-      if(res.error.message.includes('session') || res.error.message.includes('token')){
-        localStorage.clear();
-        showAuthError('Sitzung abgelaufen — bitte nochmal versuchen');
-        return;
-      }
       showAuthError('E-Mail oder Passwort falsch');
       return;
     }
@@ -2271,7 +2408,7 @@ async function doLogout(){
 async function openForgotPw(){
   var email = document.getElementById('auth-email').value.trim();
   if(!email){ showToast('Bitte zuerst deine E-Mail eingeben'); return; }
-  var res = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+  var res = await sb.auth.api.resetPasswordForEmail(email);
   if(res.error){ showToast('Fehler: ' + res.error.message); return; }
   showToast('Passwort-Reset E-Mail wurde gesendet ✓');
   closeOverlay('auth-overlay');
@@ -3078,7 +3215,7 @@ function openUpgradeModal(){
     downgradeView.style.display = 'none';
     title.textContent = 'Upgrade auf Pro';
   }
-  openUpgradeModal();
+  openOverlay('upgrade-overlay');
 }
 
 async function confirmDowngrade(){
@@ -3465,9 +3602,7 @@ function closeAccSection(){
 async function confirmDeleteAccount(){
   if(confirm('Bist du sicher? Dein Account und alle Daten werden unwiderruflich gelöscht.')){
     if(currentUser){
-      // Daten löschen (Supabase Cascade löscht meals + favorites automatisch)
       await sb.from('profiles').delete().eq('id', currentUser.id);
-      await sb.auth.admin; // Fallback: einfach ausloggen
       await sb.auth.signOut();
     }
     closeOverlay('account-overlay');
@@ -3489,6 +3624,26 @@ function updateAccountBadge(){
     if(emailEl) emailEl.textContent = currentUser.email || '';
     if(bigAvatar) bigAvatar.textContent = initials;
   }
+}
+
+// ── FEATURE TABS (Landing Page) ──
+var featureMap = {
+  analyse:   'ps-analyse',
+  wochenplan:'ps-wochenplan',
+  einkauf:   'ps-einkauf',
+  favoriten: 'ps-favoriten'
+};
+function switchFeature(key, btn){
+  // Tabs
+  document.querySelectorAll('.feat-tab').forEach(function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  // Panels
+  document.querySelectorAll('.feat-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('fp-'+key).classList.add('active');
+  // Phone screens
+  document.querySelectorAll('.ps-screen').forEach(function(s){ s.classList.remove('active'); });
+  var screenId = featureMap[key];
+  if(screenId) document.getElementById(screenId).classList.add('active');
 }
 
 // ── FAQ ──

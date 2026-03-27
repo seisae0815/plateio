@@ -1174,7 +1174,7 @@ footer p{font-size:.78rem;color:var(--muted)}
   <div class="pricing-section" id="pricing">
     <h2 class="pricing-title">Starte kostenlos — oder hol dir alle Premium-Features<br><em>für weniger als 2 Kaffee pro Monat</em></h2>
     <p class="pricing-sub">Kein Risiko. Kein Abo nötig um loszulegen.</p>
-    <div class="plans">
+    <div class="plans" style="grid-template-columns:repeat(2,1fr);max-width:600px">
       <div class="plan">
         <div class="plan-name">Free</div>
         <div class="plan-price">0 €<span>/Monat</span></div>
@@ -1192,7 +1192,7 @@ footer p{font-size:.78rem;color:var(--muted)}
         <div class="plan-badge">Beliebteste Wahl</div>
         <div class="plan-name">Pro</div>
         <div class="plan-price">4,99 €<span>/Monat</span></div>
-        <div class="plan-annual">oder 39,99 € / Jahr (2 Monate gratis)</div>
+        <div class="plan-annual" style="color:var(--muted)">Jederzeit kündbar</div>
         <ul class="plan-feats">
           <li>Unbegrenzte Analysen</li>
           <li>3 Gerichte pro Tag im Kalender</li>
@@ -1201,18 +1201,6 @@ footer p{font-size:.78rem;color:var(--muted)}
           <li>Favoriten & Rezept-Sammlung</li>
         </ul>
         <button class="plan-btn" onclick="openAuth('register')">Pro starten</button>
-      </div>
-      <div class="plan">
-        <div class="plan-name">Jahres-Pro</div>
-        <div class="plan-price">3,33 €<span>/Monat</span></div>
-        <div class="plan-annual">39,99 € einmalig pro Jahr</div>
-        <ul class="plan-feats">
-          <li>Alles aus Pro</li>
-          <li>2 Monate gespart</li>
-          <li>Prioritäts-Support</li>
-          <li>Früher Zugang zu neuen Features</li>
-        </ul>
-        <button class="plan-btn" onclick="openAuth('register')">Jetzt sparen</button>
       </div>
     </div>
   </div>
@@ -2051,19 +2039,12 @@ footer p{font-size:.78rem;color:var(--muted)}
           <li>Komplett werbefrei</li>
           <li>Favoriten & Rezept-Sammlung</li>
         </ul>
-        <div class="upgrade-plans">
-          <div class="up-plan selected" id="up-monthly" onclick="selectPlan('monthly')">
-            <div class="up-plan-name">Monatlich</div>
-            <div class="up-plan-price">4,99 €<span style="font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--muted)">/Mo</span></div>
-            <div class="up-plan-note">Jederzeit kündbar</div>
-          </div>
-          <div class="up-plan" id="up-yearly" onclick="selectPlan('yearly')">
-            <div class="up-plan-name">Jährlich 🎉</div>
-            <div class="up-plan-price">3,33 €<span style="font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--muted)">/Mo</span></div>
-            <div class="up-plan-note">39,99 € / Jahr · 2 Mo. gratis</div>
-          </div>
+        <div style="background:var(--sage-l);border:1.5px solid var(--sage);border-radius:14px;padding:1.4rem 1.6rem;margin:1.2rem 0;text-align:center">
+          <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--sage);font-weight:600;margin-bottom:.4rem">Pro — Monatlich</div>
+          <div style="font-family:'Fraunces',serif;font-size:2.4rem;font-weight:300;color:var(--dark);line-height:1">4,99 €<span style="font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--muted)">/Monat</span></div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.4rem">Jederzeit kündbar · keine Mindestlaufzeit</div>
         </div>
-        <button class="btn-full" style="margin-top:1.2rem" onclick="simulateUpgrade()">Jetzt upgraden (Demo)</button>
+        <button class="btn-full" onclick="simulateUpgrade()">Jetzt upgraden (Demo)</button>
         <div style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:.7rem">Sicher bezahlen mit Stripe · Jederzeit kündbar</div>
       </div>
 
@@ -2777,41 +2758,106 @@ function updateAnalysisHint(){
   }
 }
 
-function startAnalyze(){
+// ── OPENAI CONFIG ──
+var OPENAI_KEY = 'OPENAI_KEY_HERE';
+
+async function startAnalyze(){
   if(!isPro && analysesUsed >= maxAnalysesFree){
     openUpgradeModal();
     return;
   }
   var url = document.getElementById('ig-url').value.trim();
   if(!url){ showToast('Bitte einen Link einfügen'); return; }
+
   var savedIgUrl = url;
   var platform = detectPlatform(url);
+
   document.getElementById('analyze-btn').disabled = true;
   document.getElementById('loading-text').textContent = 'Rezept wird analysiert...';
   document.getElementById('loading-wrap').classList.add('open');
 
-  // Simulate API call (replace with real OpenAI call in production)
-  setTimeout(function(){
-    document.getElementById('loading-wrap').classList.remove('open');
-    document.getElementById('analyze-btn').disabled = false;
-    dbIncrementAnalyses();
-    updateAnalysisHint();
+  try {
+    var prompt = `Du bist ein Rezept-Extraktor. Der Nutzer hat folgenden Link geteilt: ${url}
 
-    var r = demoRecipes[Math.floor(Math.random()*demoRecipes.length)];
+Da du keinen direkten Zugriff auf Instagram/Pinterest/Facebook hast, analysiere den Link und extrahiere ein realistisches, passendes Rezept basierend auf dem Link-Kontext.
+
+Antworte NUR mit einem JSON-Objekt in folgendem Format (kein anderer Text):
+{
+  "title": "Rezepttitel auf Deutsch",
+  "ingredients": "Zutat 1\\nZutat 2\\nZutat 3\\n...",
+  "steps": "1. Schritt\\n2. Schritt\\n3. Schritt\\n...",
+  "notes": "Optionaler Tipp oder Hinweis",
+  "portions": 2
+}
+
+Wichtig:
+- Titel auf Deutsch
+- Zutaten mit Mengenangaben, eine pro Zeile
+- Schritte nummeriert, einer pro Zeile
+- Realistisches, alltagstaugliches Rezept
+- notes kann leer sein ("")`;
+
+    var response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + OPENAI_KEY
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        max_tokens: 800,
+        temperature: 0.7,
+        messages: [
+          { role: 'user', content: prompt }
+        ]
+      })
+    });
+
+    if(!response.ok){
+      var err = await response.json();
+      throw new Error(err.error && err.error.message ? err.error.message : 'API Fehler ' + response.status);
+    }
+
+    var data = await response.json();
+    var raw = data.choices[0].message.content.trim();
+
+    // JSON aus der Antwort extrahieren
+    var jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if(!jsonMatch) throw new Error('Ungültiges Antwortformat');
+    var recipe = JSON.parse(jsonMatch[0]);
+
+    // Felder befüllen
     resetAnImgArea();
-    document.getElementById('an-title').value = r.title;
-    document.getElementById('an-ingredients').value = r.ingredients;
-    document.getElementById('an-steps').value = r.steps;
-    document.getElementById('an-notes').value = r.notes||'';
+    document.getElementById('an-title').value = recipe.title || '';
+    document.getElementById('an-ingredients').value = recipe.ingredients || '';
+    document.getElementById('an-steps').value = recipe.steps || '';
+    document.getElementById('an-notes').value = recipe.notes || '';
     document.getElementById('an-repeat').value = 'none';
-    document.getElementById('ig-url').value='';
+    document.getElementById('ig-url').value = '';
     document.getElementById('analyze-overlay').setAttribute('data-igurl', savedIgUrl);
     document.getElementById('analyze-overlay').setAttribute('data-platform', platform);
-    // Update the IG badge label
+
     var badge = document.querySelector('#analyze-overlay .ig-badge');
-    if(badge) badge.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> '+getPlatformLabel(platform);
+    if(badge) badge.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> ' + getPlatformLabel(platform);
+
+    dbIncrementAnalyses();
+    updateAnalysisHint();
     openOverlay('analyze-overlay');
-  }, 2400);
+
+  } catch(e) {
+    console.error('OpenAI Fehler:', e);
+    // Fehler-Handling
+    if(e.message && e.message.includes('insufficient_quota')){
+      showToast('OpenAI-Guthaben aufgebraucht — bitte Konto aufladen');
+    } else if(e.message && e.message.includes('401')){
+      showToast('API-Key ungültig — bitte prüfen');
+    } else {
+      showToast('Analyse fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'));
+    }
+  } finally {
+    document.getElementById('loading-wrap').classList.remove('open');
+    document.getElementById('analyze-btn').disabled = false;
+  }
 }
 
 function saveAnalyzed(){
@@ -3286,7 +3332,7 @@ var selectedPlan = 'monthly';
 function selectPlan(p){
   selectedPlan=p;
   document.getElementById('up-monthly').classList.toggle('selected',p==='monthly');
-  document.getElementById('up-yearly').classList.toggle('selected',p==='yearly');
+  
 }
 
 function simulateUpgrade(){
@@ -3308,7 +3354,7 @@ var legalContent = {
     title: 'Datenschutzerklärung',
     html: `
 <div class="legal-h1">Datenschutzerklärung</div>
-<p class="legal-p">Stand: 2025 · Verantwortlicher: <span class="legal-placeholder">[DEIN VORNAME NACHNAME]</span>, <span class="legal-placeholder">[STRASSE, HAUSNUMMER]</span>, <span class="legal-placeholder">[PLZ ORT]</span>, Österreich · E-Mail: <span class="legal-placeholder">[DEINE@EMAIL.AT]</span></p>
+<p class="legal-p">Stand: 2025 · Verantwortlicher: <span class="legal-placeholder">Hannes Seisl</span>, <span class="legal-placeholder">Trautweinstraße 14</span>, <span class="legal-placeholder">6330 Kufstein</span>, Österreich · E-Mail: <span class="legal-placeholder">support@plateio.app (folgt)</span></p>
 
 <div class="legal-h2">1. Grundsatz</div>
 <p class="legal-p">Wir nehmen den Schutz deiner personenbezogenen Daten ernst und verarbeiten diese ausschließlich auf Basis der Datenschutz-Grundverordnung (DSGVO) sowie des österreichischen Datenschutzgesetzes (DSG).</p>
@@ -3351,7 +3397,7 @@ var legalContent = {
   <li>Recht auf Datenübertragbarkeit</li>
   <li>Recht auf Widerspruch gegen die Verarbeitung</li>
 </ul>
-<p class="legal-p">Zur Ausübung deiner Rechte wende dich an: <span class="legal-placeholder">[DEINE@EMAIL.AT]</span></p>
+<p class="legal-p">Zur Ausübung deiner Rechte wende dich an: <span class="legal-placeholder">support@plateio.app (folgt)</span></p>
 
 <div class="legal-h2">8. Beschwerderecht</div>
 <p class="legal-p">Du hast das Recht, Beschwerde bei der österreichischen Datenschutzbehörde einzulegen: <strong>Österreichische Datenschutzbehörde</strong>, Barichgasse 40–42, 1030 Wien, dsb@dsb.gv.at</p>
@@ -3364,10 +3410,10 @@ var legalContent = {
     title: 'Allgemeine Geschäftsbedingungen',
     html: `
 <div class="legal-h1">Allgemeine Geschäftsbedingungen (AGB)</div>
-<p class="legal-p">Stand: 2025 · Anbieter: <span class="legal-placeholder">[DEIN VORNAME NACHNAME]</span>, <span class="legal-placeholder">[STRASSE, HAUSNUMMER, PLZ ORT]</span>, Österreich</p>
+<p class="legal-p">Stand: 2025 · Anbieter: <span class="legal-placeholder">Hannes Seisl</span>, <span class="legal-placeholder">Trautweinstraße 14, 6330 Kufstein</span>, Österreich</p>
 
 <div class="legal-h2">1. Geltungsbereich</div>
-<p class="legal-p">Diese AGB gelten für die Nutzung der Web-App „Plateio" unter <span class="legal-placeholder">[DEINE DOMAIN, z.B. plateio.app]</span>. Mit der Registrierung akzeptierst du diese Bedingungen.</p>
+<p class="legal-p">Diese AGB gelten für die Nutzung der Web-App „Plateio" unter <span class="legal-placeholder">folgt</span>. Mit der Registrierung akzeptierst du diese Bedingungen.</p>
 
 <div class="legal-h2">2. Leistungsbeschreibung</div>
 <p class="legal-p">Plateio ist ein digitaler Mahlzeitenplaner der es ermöglicht, Rezepte aus Instagram-Posts mittels KI zu analysieren und in einem Wochenplan zu organisieren. Der Dienst wird als Web-App bereitgestellt.</p>
@@ -3381,7 +3427,7 @@ var legalContent = {
 <p class="legal-p">Alle Preise inkl. gesetzlicher MwSt. Zahlungen werden über Stripe abgewickelt.</p>
 
 <div class="legal-h2">4. Vertragslaufzeit & Kündigung</div>
-<p class="legal-p">Das monatliche Pro-Abo verlängert sich automatisch um einen Monat, das Jahres-Abo um ein Jahr, sofern nicht rechtzeitig gekündigt wird. Die Kündigung ist jederzeit mit sofortiger Wirkung zum Ende des bezahlten Zeitraums möglich — direkt in den Kontoeinstellungen.</p>
+<p class="legal-p">Das Pro-Abo verlängert sich automatisch um einen Monat, sofern nicht rechtzeitig gekündigt wird. Die Kündigung ist jederzeit mit sofortiger Wirkung zum Ende des bezahlten Zeitraums möglich — direkt in den Kontoeinstellungen.</p>
 
 <div class="legal-h2">5. Widerrufsrecht</div>
 <p class="legal-p">Bei digitalen Inhalten, die sofort nach Vertragsabschluss bereitgestellt werden, erlischt das Widerrufsrecht gemäß § 18 Abs. 1 Z 11 FAGG mit Beginn der Ausführung des Vertrages, sofern du ausdrücklich zugestimmt hast, dass wir vor Ablauf der Widerrufsfrist mit der Ausführung beginnen.</p>
@@ -3390,6 +3436,9 @@ var legalContent = {
 <p class="legal-p">Wir bemühen uns um eine hohe Verfügbarkeit des Dienstes, können jedoch keine 100%ige Verfügbarkeit garantieren. Wartungsarbeiten werden nach Möglichkeit angekündigt.</p>
 <p class="legal-p">Die KI-Analyse von Instagram-Posts basiert auf maschinellem Lernen. Wir übernehmen keine Gewähr für die Vollständigkeit oder Richtigkeit der erkannten Rezepte. Der Nutzer ist für die Überprüfung der Inhalte verantwortlich.</p>
 <p class="legal-p">Die Haftung für leichte Fahrlässigkeit ist — soweit gesetzlich zulässig — ausgeschlossen, außer bei Personenschäden.</p>
+
+<div class="legal-h2">6a. Einstellung des Dienstes</div>
+<p class="legal-p">Wir behalten uns vor, den Betrieb von Plateio jederzeit einzustellen. Im Falle einer Einstellung werden registrierte Nutzer mindestens 30 Tage im Voraus per E-Mail an die hinterlegte Adresse informiert. Der Dienst steht während dieser Ankündigungsfrist weiterhin vollumfänglich zur Verfügung. Nach Ablauf der Ankündigungsfrist besteht kein Anspruch auf anteilige Rückerstattung bereits bezahlter Entgelte.</p>
 
 <div class="legal-h2">7. Nutzerpflichten</div>
 <ul class="legal-ul">
@@ -3403,11 +3452,11 @@ var legalContent = {
 <p class="legal-p">Wir behalten uns vor, diese AGB mit einer Ankündigungsfrist von 30 Tagen zu ändern. Du wirst per E-Mail informiert. Bei wesentlichen Änderungen hast du das Recht, das Abo außerordentlich zu kündigen.</p>
 
 <div class="legal-h2">9. Anwendbares Recht & Gerichtsstand</div>
-<p class="legal-p">Es gilt österreichisches Recht unter Ausschluss des UN-Kaufrechts. Gerichtsstand für Streitigkeiten mit Unternehmern ist <span class="legal-placeholder">[DEIN WOHNORT]</span>, Österreich.</p>
+<p class="legal-p">Es gilt österreichisches Recht unter Ausschluss des UN-Kaufrechts. Gerichtsstand für Streitigkeiten mit Unternehmern ist <span class="legal-placeholder">Kufstein</span>, Österreich.</p>
 <p class="legal-p">Für Verbraucher gilt der allgemeine Gerichtsstand gemäß § 14 KSchG. Die EU-Kommission stellt unter <a href="https://ec.europa.eu/consumers/odr" target="_blank" style="color:var(--sage)">ec.europa.eu/consumers/odr</a> eine Online-Streitbeilegungsplattform bereit.</p>
 
 <div class="legal-h2">10. Kontakt</div>
-<p class="legal-p">Bei Fragen zu diesen AGB: <span class="legal-placeholder">[DEINE@EMAIL.AT]</span></p>
+<p class="legal-p">Bei Fragen zu diesen AGB: <span class="legal-placeholder">support@plateio.app (folgt)</span></p>
     `
   },
   impressum: {
@@ -3419,22 +3468,22 @@ var legalContent = {
 <div class="legal-h2">Angaben gemäß § 5 ECG (Österreich)</div>
 
 <p class="legal-p">
-  <strong>Name:</strong> <span class="legal-placeholder">[DEIN VORNAME NACHNAME]</span><br>
-  <strong>Adresse:</strong> <span class="legal-placeholder">[STRASSE HAUSNUMMER]</span>, <span class="legal-placeholder">[PLZ ORT]</span>, Österreich<br>
-  <strong>E-Mail:</strong> <span class="legal-placeholder">[DEINE@EMAIL.AT]</span><br>
+  <strong>Name:</strong> <span class="legal-placeholder">Hannes Seisl</span><br>
+  <strong>Adresse:</strong> <span class="legal-placeholder">Trautweinstraße 14</span>, <span class="legal-placeholder">6330 Kufstein</span>, Österreich<br>
+  <strong>E-Mail:</strong> <span class="legal-placeholder">support@plateio.app (folgt)</span><br>
   <strong>Telefon:</strong> <span class="legal-placeholder">[+43 ...]</span> (optional, aber empfohlen)
 </p>
 
 <div class="legal-h2">Unternehmensform & Gewerbebehörde</div>
 <p class="legal-p">
-  <strong>Rechtsform:</strong> <span class="legal-placeholder">[z.B. Einzelunternehmer / e.U. / GmbH]</span><br>
-  <strong>Gewerbebehörde:</strong> <span class="legal-placeholder">[Bezirkshauptmannschaft / Magistrat DEINER STADT]</span><br>
+  <strong>Rechtsform:</strong> <span class="legal-placeholder">folgt</span><br>
+  <strong>Gewerbebehörde:</strong> <span class="legal-placeholder">Bezirkshauptmannschaft Kufstein</span><br>
   <strong>Gewerbe:</strong> Dienstleistungen in der automatischen Datenverarbeitung und Informationstechnik<br>
-  <strong>UID-Nummer:</strong> <span class="legal-placeholder">[ATU... — erst nach Anmeldung beim Finanzamt]</span>
+  <strong>UID-Nummer:</strong> <span class="legal-placeholder">folgt (nach Gewerbeanmeldung)</span>
 </p>
 
 <div class="legal-h2">Inhaltliche Verantwortung</div>
-<p class="legal-p"><span class="legal-placeholder">[DEIN VORNAME NACHNAME]</span> (Anschrift wie oben)</p>
+<p class="legal-p"><span class="legal-placeholder">Hannes Seisl</span> (Anschrift wie oben)</p>
 
 <div class="legal-h2">Haftungsausschluss</div>
 <p class="legal-p">Trotz sorgfältiger Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>

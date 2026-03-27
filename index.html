@@ -2758,9 +2758,6 @@ function updateAnalysisHint(){
   }
 }
 
-// ── OPENAI CONFIG ──
-var OPENAI_KEY = 'OPENAI_KEY_HERE';
-
 async function startAnalyze(){
   if(!isPro && analysesUsed >= maxAnalysesFree){
     openUpgradeModal();
@@ -2777,61 +2774,24 @@ async function startAnalyze(){
   document.getElementById('loading-wrap').classList.add('open');
 
   try {
-    var prompt = `Du bist ein Rezept-Extraktor. Der Nutzer hat folgenden Link geteilt: ${url}
-
-Da du keinen direkten Zugriff auf Instagram/Pinterest/Facebook hast, analysiere den Link und extrahiere ein realistisches, passendes Rezept basierend auf dem Link-Kontext.
-
-Antworte NUR mit einem JSON-Objekt in folgendem Format (kein anderer Text):
-{
-  "title": "Rezepttitel auf Deutsch",
-  "ingredients": "Zutat 1\\nZutat 2\\nZutat 3\\n...",
-  "steps": "1. Schritt\\n2. Schritt\\n3. Schritt\\n...",
-  "notes": "Optionaler Tipp oder Hinweis",
-  "portions": 2
-}
-
-Wichtig:
-- Titel auf Deutsch
-- Zutaten mit Mengenangaben, eine pro Zeile
-- Schritte nummeriert, einer pro Zeile
-- Realistisches, alltagstaugliches Rezept
-- notes kann leer sein ("")`;
-
-    var response = await fetch('https://api.openai.com/v1/chat/completions', {
+    var response = await fetch('/api/analyze', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + OPENAI_KEY
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        max_tokens: 800,
-        temperature: 0.7,
-        messages: [
-          { role: 'user', content: prompt }
-        ]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: url })
     });
 
-    if(!response.ok){
-      var err = await response.json();
-      throw new Error(err.error && err.error.message ? err.error.message : 'API Fehler ' + response.status);
-    }
-
     var data = await response.json();
-    var raw = data.choices[0].message.content.trim();
 
-    // JSON aus der Antwort extrahieren
-    var jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if(!jsonMatch) throw new Error('Ungültiges Antwortformat');
-    var recipe = JSON.parse(jsonMatch[0]);
+    if(!response.ok){
+      throw new Error(data.error || 'Analyse fehlgeschlagen');
+    }
 
     // Felder befüllen
     resetAnImgArea();
-    document.getElementById('an-title').value = recipe.title || '';
-    document.getElementById('an-ingredients').value = recipe.ingredients || '';
-    document.getElementById('an-steps').value = recipe.steps || '';
-    document.getElementById('an-notes').value = recipe.notes || '';
+    document.getElementById('an-title').value = data.title || '';
+    document.getElementById('an-ingredients').value = data.ingredients || '';
+    document.getElementById('an-steps').value = data.steps || '';
+    document.getElementById('an-notes').value = data.notes || '';
     document.getElementById('an-repeat').value = 'none';
     document.getElementById('ig-url').value = '';
     document.getElementById('analyze-overlay').setAttribute('data-igurl', savedIgUrl);
@@ -2845,14 +2805,11 @@ Wichtig:
     openOverlay('analyze-overlay');
 
   } catch(e) {
-    console.error('OpenAI Fehler:', e);
-    // Fehler-Handling
-    if(e.message && e.message.includes('insufficient_quota')){
-      showToast('OpenAI-Guthaben aufgebraucht — bitte Konto aufladen');
-    } else if(e.message && e.message.includes('401')){
-      showToast('API-Key ungültig — bitte prüfen');
+    console.error('Analyse Fehler:', e);
+    if(e.message && e.message.includes('Guthaben')){
+      showToast('OpenAI-Guthaben aufgebraucht — bitte später nochmal versuchen');
     } else {
-      showToast('Analyse fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'));
+      showToast('Analyse fehlgeschlagen — bitte nochmal versuchen');
     }
   } finally {
     document.getElementById('loading-wrap').classList.remove('open');

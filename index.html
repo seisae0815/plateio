@@ -1596,6 +1596,14 @@ footer p{font-size:.78rem;color:var(--muted)}
           Analysieren
         </button>
       </div>
+      <!-- Caption Feld — erscheint nach Link-Eingabe -->
+      <div id="caption-field-wrap" style="margin-top:.7rem;display:none">
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:.35rem;line-height:1.5">
+          📋 <strong>Für genaue Ergebnisse:</strong> Öffne den Post, tippe auf „... mehr" und kopiere den Rezepttext hier rein.
+        </div>
+        <textarea id="ig-caption" placeholder="Rezepttext aus dem Post hier einfügen (optional aber empfohlen)..." rows="4" style="width:100%;border:1px solid var(--border);border-radius:9px;padding:.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;transition:border .2s;background:var(--cream);resize:vertical;line-height:1.5"></textarea>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:.3rem">Ohne Text wird ein passendes Rezept automatisch generiert.</div>
+      </div>
       <div class="import-hint" id="import-hint" style="margin-top:.5rem">Unterstützte Plattformen:
         <span style="color:#e1306c;font-weight:500">Instagram</span> ·
         <span style="color:#e60023;font-weight:500">Pinterest</span> ·
@@ -2461,9 +2469,15 @@ var supportedDomains = ['instagram.com','pinterest.com','pin.it','facebook.com',
 function validateLinkInput(input){
   var val = input.value.trim();
   var warn = document.getElementById('link-invalid-warn');
-  if(!val){ warn.style.display='none'; return; }
+  var captionWrap = document.getElementById('caption-field-wrap');
+  if(!val){
+    warn.style.display='none';
+    captionWrap.style.display='none';
+    return;
+  }
   var isSupported = supportedDomains.some(function(d){ return val.includes(d); });
   warn.style.display = (!isSupported && val.length > 10) ? 'block' : 'none';
+  captionWrap.style.display = (isSupported && val.length > 10) ? 'block' : 'none';
 }
 
 // ── PRO ACCESS CONTROL ──
@@ -2768,6 +2782,7 @@ async function startAnalyze(){
 
   var savedIgUrl = url;
   var platform = detectPlatform(url);
+  var caption = document.getElementById('ig-caption') ? document.getElementById('ig-caption').value.trim() : '';
 
   document.getElementById('analyze-btn').disabled = true;
   document.getElementById('loading-text').textContent = 'Rezept wird analysiert...';
@@ -2777,7 +2792,7 @@ async function startAnalyze(){
     var response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: url })
+      body: JSON.stringify({ url: url, caption: caption })
     });
 
     var data = await response.json();
@@ -2793,6 +2808,9 @@ async function startAnalyze(){
     document.getElementById('an-steps').value = data.steps || '';
     document.getElementById('an-notes').value = data.notes || '';
     document.getElementById('ig-url').value = '';
+    var captionEl = document.getElementById('ig-caption');
+    if(captionEl) captionEl.value = '';
+    document.getElementById('caption-field-wrap').style.display = 'none';
     document.getElementById('analyze-overlay').setAttribute('data-igurl', savedIgUrl);
     document.getElementById('analyze-overlay').setAttribute('data-platform', platform);
 

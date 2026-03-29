@@ -9,18 +9,54 @@ export default async function handler(req, res) {
   const { url, caption } = req.body;
   if (!url) return res.status(400).json({ error: 'URL fehlt' });
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'API Key nicht konfiguriert' });
+  const openaiKey = process.env.OPENAI_API_KEY;
+  const apifyToken = process.env.APIFY_API_TOKEN;
 
+  if (!openaiKey) return res.status(500).json({ error: 'OpenAI API Key nicht konfiguriert' });
+
+  let captionText = caption || '';
+
+  // ── APIFY: Instagram Caption holen wenn kein Caption-Text vorhanden ──
+  const isInstagram = url.includes('instagram.com');
+  if (isInstagram && apifyToken && captionText.length < 20) {
+    try {
+      // Apify Instagram Post Scraper starten
+      const runRes = await fetch(
+        `https://api.apify.com/v2/acts/apify~instagram-post-scraper/run-sync-get-dataset-items?token=${apifyToken}&timeout=30`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            directUrls: [url],
+            resultsLimit: 1
+          })
+        }
+      );
+
+      if (runRes.ok) {
+        const posts = await runRes.json();
+        if (posts && posts.length > 0 && posts[0].caption) {
+          captionText = posts[0].caption;
+          console.log('Apify caption gefunden:', captionText.substring(0, 100));
+        }
+      } else {
+        console.log('Apify Fehler:', runRes.status);
+      }
+    } catch (e) {
+      console.log('Apify nicht verfügbar, fahre ohne fort:', e.message);
+    }
+  }
+
+  // ── OPENAI: Rezept aus Caption oder URL generieren ──
   let prompt;
 
-  if (caption && caption.length > 20) {
+  if (captionText && captionText.length > 20) {
     prompt = `Du bist ein Rezept-Extraktor für eine Meal-Planning App.
 
-Der Nutzer hat folgenden Instagram/Pinterest/Facebook Post-Text kopiert:
+Der Nutzer hat folgenden Post-Text:
 
 """
-${caption}
+${captionText.substring(0, 3000)}
 """
 
 Extrahiere daraus das Rezept und antworte NUR mit einem JSON-Objekt (kein anderer Text, keine Backticks):
@@ -37,8 +73,8 @@ Regeln:
 - Übersetze ins Deutsche falls nötig
 - Zutaten mit konkreten Mengenangaben, eine pro Zeile
 - Schritte nummeriert und klar
-- notes: hilfreiche Tipps aus dem Post, oder "" wenn keine vorhanden
-- portions: Portionenanzahl aus dem Text, sonst 2`;
+- notes: hilfreiche Tipps aus dem Post, oder "" wenn keine
+- portions: aus dem Text, sonst 2`;
   } else {
     prompt = `Du bist ein Rezept-Extraktor für eine Meal-Planning App.
 
@@ -65,7 +101,7 @@ Regeln:
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${openaiKey}`
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
@@ -89,6 +125,10 @@ Regeln:
     if (!jsonMatch) return res.status(500).json({ error: 'Ungültiges Antwortformat' });
 
     const recipe = JSON.parse(jsonMatch[0]);
+    
+    // Hinweis ob Caption gefunden wurde
+    recipe._source = captionText.length > 20 ? 'caption' : 'generated';
+    
     return res.status(200).json(recipe);
 
   } catch (e) {

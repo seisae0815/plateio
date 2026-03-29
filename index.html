@@ -1596,13 +1596,13 @@ footer p{font-size:.78rem;color:var(--muted)}
           Analysieren
         </button>
       </div>
-      <!-- Caption Feld — erscheint nach Link-Eingabe -->
+      <!-- Caption Feld — nur für Pinterest/Facebook wo Apify nicht verfügbar -->
       <div id="caption-field-wrap" style="margin-top:.7rem;display:none">
         <div style="font-size:.72rem;color:var(--muted);margin-bottom:.35rem;line-height:1.5">
-          📋 <strong>Für genaue Ergebnisse:</strong> Öffne den Post, tippe auf „... mehr" und kopiere den Rezepttext hier rein.
+          📋 <strong>Für genaue Ergebnisse:</strong> Kopiere den Rezepttext aus dem Post und füge ihn hier ein.
         </div>
-        <textarea id="ig-caption" placeholder="Rezepttext aus dem Post hier einfügen (optional aber empfohlen)..." rows="4" style="width:100%;border:1px solid var(--border);border-radius:9px;padding:.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;transition:border .2s;background:var(--cream);resize:vertical;line-height:1.5"></textarea>
-        <div style="font-size:.7rem;color:var(--muted);margin-top:.3rem">Ohne Text wird ein passendes Rezept automatisch generiert.</div>
+        <textarea id="ig-caption" placeholder="Rezepttext aus dem Post hier einfügen (optional)..." rows="3" style="width:100%;border:1px solid var(--border);border-radius:9px;padding:.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;transition:border .2s;background:var(--cream);resize:vertical;line-height:1.5"></textarea>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:.3rem">Bei Instagram wird das Rezept automatisch erkannt.</div>
       </div>
       <div class="import-hint" id="import-hint" style="margin-top:.5rem">Unterstützte Plattformen:
         <span style="color:#e1306c;font-weight:500">Instagram</span> ·
@@ -2476,8 +2476,10 @@ function validateLinkInput(input){
     return;
   }
   var isSupported = supportedDomains.some(function(d){ return val.includes(d); });
+  var isInstagram = val.includes('instagram.com');
   warn.style.display = (!isSupported && val.length > 10) ? 'block' : 'none';
-  captionWrap.style.display = (isSupported && val.length > 10) ? 'block' : 'none';
+  // Caption-Feld nur bei Pinterest/Facebook zeigen (Instagram läuft über Apify)
+  captionWrap.style.display = (isSupported && !isInstagram && val.length > 10) ? 'block' : 'none';
 }
 
 // ── PRO ACCESS CONTROL ──

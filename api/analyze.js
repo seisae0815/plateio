@@ -16,84 +16,76 @@ export default async function handler(req, res) {
 
   let captionText = caption || '';
 
-  // ── APIFY: Instagram Caption holen wenn kein Caption-Text vorhanden ──
+  // ── APIFY: Instagram Caption holen ──
   const isInstagram = url.includes('instagram.com');
   if (isInstagram && apifyToken && captionText.length < 20) {
     try {
-      // Apify Instagram Post Scraper starten
+      // Instagram Scraper — optimiert für einzelne Posts
       const runRes = await fetch(
-        `https://api.apify.com/v2/acts/apify~instagram-post-scraper/run-sync-get-dataset-items?token=${apifyToken}&timeout=30`,
+        `https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items?token=${apifyToken}&timeout=45&memory=256`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             directUrls: [url],
-            resultsLimit: 1
+            resultsType: 'posts',
+            resultsLimit: 1,
+            addParentData: false
           })
         }
       );
 
       if (runRes.ok) {
         const posts = await runRes.json();
-        if (posts && posts.length > 0 && posts[0].caption) {
-          captionText = posts[0].caption;
-          console.log('Apify caption gefunden:', captionText.substring(0, 100));
+        if (posts && posts.length > 0) {
+          // Caption kann in verschiedenen Feldern liegen
+          captionText = posts[0].caption || posts[0].text || posts[0].description || '';
+          console.log('Apify caption gefunden, Länge:', captionText.length);
+        } else {
+          console.log('Apify: keine Posts zurückgegeben');
         }
       } else {
-        console.log('Apify Fehler:', runRes.status);
+        const errText = await runRes.text();
+        console.log('Apify HTTP Fehler:', runRes.status, errText.substring(0, 200));
       }
     } catch (e) {
-      console.log('Apify nicht verfügbar, fahre ohne fort:', e.message);
+      console.log('Apify Fehler:', e.message);
     }
   }
 
-  // ── OPENAI: Rezept aus Caption oder URL generieren ──
+  // ── OPENAI: Rezept generieren ──
   let prompt;
 
   if (captionText && captionText.length > 20) {
     prompt = `Du bist ein Rezept-Extraktor für eine Meal-Planning App.
 
-Der Nutzer hat folgenden Post-Text:
+Folgender Text stammt aus einem Instagram/Pinterest/Facebook Post:
 
 """
 ${captionText.substring(0, 3000)}
 """
 
-Extrahiere daraus das Rezept und antworte NUR mit einem JSON-Objekt (kein anderer Text, keine Backticks):
+Extrahiere daraus das Rezept. Antworte NUR mit einem JSON-Objekt (kein Text davor/danach, keine Backticks):
 {
   "title": "Prägnanter Rezepttitel auf Deutsch",
   "ingredients": "Menge Zutat 1\\nMenge Zutat 2\\nMenge Zutat 3",
   "steps": "1. Schritt\\n2. Schritt\\n3. Schritt",
-  "notes": "Optionaler Tipp aus dem Post",
+  "notes": "Tipp aus dem Post oder leer",
   "portions": 2
-}
-
-Regeln:
-- Extrahiere nur was wirklich im Text steht
-- Übersetze ins Deutsche falls nötig
-- Zutaten mit konkreten Mengenangaben, eine pro Zeile
-- Schritte nummeriert und klar
-- notes: hilfreiche Tipps aus dem Post, oder "" wenn keine
-- portions: aus dem Text, sonst 2`;
+}`;
   } else {
     prompt = `Du bist ein Rezept-Extraktor für eine Meal-Planning App.
 
-Der Nutzer hat folgenden Link geteilt: ${url}
+Link: ${url}
 
-Erstelle ein realistisches Rezept das zum Link passt und antworte NUR mit einem JSON-Objekt (kein anderer Text, keine Backticks):
+Erstelle ein passendes Rezept. Antworte NUR mit einem JSON-Objekt (kein Text davor/danach, keine Backticks):
 {
-  "title": "Prägnanter Rezepttitel auf Deutsch",
+  "title": "Rezepttitel auf Deutsch",
   "ingredients": "Menge Zutat 1\\nMenge Zutat 2\\nMenge Zutat 3",
   "steps": "1. Schritt\\n2. Schritt\\n3. Schritt",
   "notes": "",
   "portions": 2
-}
-
-Regeln:
-- Titel appetitlich auf Deutsch
-- Zutaten mit Mengenangaben, eine pro Zeile
-- Schritte nummeriert
-- Realistisches Rezept für 2 Personen`;
+}`;
   }
 
   try {
@@ -125,14 +117,11 @@ Regeln:
     if (!jsonMatch) return res.status(500).json({ error: 'Ungültiges Antwortformat' });
 
     const recipe = JSON.parse(jsonMatch[0]);
-    
-    // Hinweis ob Caption gefunden wurde
-    recipe._source = captionText.length > 20 ? 'caption' : 'generated';
-    
+    recipe._source = captionText.length > 20 ? 'apify' : 'generated';
     return res.status(200).json(recipe);
 
   } catch (e) {
-    console.error('Analyze error:', e);
+    console.error('OpenAI Fehler:', e);
     return res.status(500).json({ error: e.message || 'Unbekannter Fehler' });
   }
 }
